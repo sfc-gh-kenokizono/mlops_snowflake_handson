@@ -1,0 +1,15 @@
+# Snowflake Notebook 環境設定
+# このファイルはNotebookと同じディレクトリに配置することで
+# 自動的にパッケージがインストールされます
+
+name: mlops_handson
+channels:
+  - snowflake
+dependencies:
+  - snowflake-ml-python
+  - shap
+  - matplotlib
+  - xgboost
+  - scikit-learn
+  - scipy
+
