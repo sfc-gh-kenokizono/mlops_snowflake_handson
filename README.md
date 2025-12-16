@@ -13,7 +13,7 @@
 データからチャーンを定義し、ラベルを作成するMLの基本ステップから始め、
 Feature Store、Model Registry までの一連のワークフローを学びます。
 
-**Notebookはコンピュートプール（コンテナランタイム）で動作** - 起動が早く、コスト効率が良いです。
+**NotebookはGPUコンピュートプール（コンテナランタイム）で動作** - 起動が早く、ML処理に最適化されています。
 
 ## 🎯 ハンズオンの目的
 
@@ -108,13 +108,15 @@ flowchart LR
 
 ### 2. ハンズオン実行
 
-Snowflake Notebookを順番に実行:
+Snowflake Notebookを **順番に** 実行（依存関係あり）:
 
-1. `01_DATA_EXPLORATION` - データ理解 + チャーンラベル作成
-2. `02_FEATURE_STORE` - 特徴量の設計・登録
+1. `01_DATA_EXPLORATION` - データ理解 + チャーンラベル作成 → **CHURN_LABELS作成**
+2. `02_FEATURE_STORE` - 特徴量の設計・登録 → **TRAINING_DATASET作成**
 3. `03_MODEL_TRAINING` - モデル学習
 4. `04_EXPERIMENT_TRACKING` - 実験管理
 5. `05_MODEL_REGISTRY` - モデル登録・本番活用
+
+⚠️ **重要**: 各Notebookは前のNotebookで作成されるテーブルに依存しています。必ず順番に実行してください。
 
 ## 📋 前提条件
 

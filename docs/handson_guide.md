@@ -142,12 +142,14 @@ flowchart TB
 --   - Git API統合 & Gitリポジトリ
 --   - DATABASE: MLOPS_HOL_DB
 --   - SCHEMA: PREP_DATA, FEATURE_STORE, MODEL_REGISTRY, EXPERIMENTS, ANALYTICS
---   - COMPUTE_POOL: MLOPS_HOL_COMPUTE_POOL (Notebook用コンテナランタイム)
+--   - COMPUTE_POOL: MLOPS_HOL_COMPUTE_POOL (GPU_NV_S, MAX_NODES=10)
 --   - WAREHOUSE: MLOPS_HOL_SQL_WH (SQLクエリ用 XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
 --   - テーブル: CUSTOMERS, ORDERS
---   - 5つのNotebook（コンテナランタイムで高速起動）
+--   - 5つのNotebook（GPUランタイムで高速ML処理）
 ```
+
+⚠️ **重要**: Notebookは依存関係があるため、1→2→3→4→5の順番で実行してください。
 
 ---
 
