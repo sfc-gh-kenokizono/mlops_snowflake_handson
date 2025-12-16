@@ -142,10 +142,11 @@ flowchart TB
 --   - Git API統合 & Gitリポジトリ
 --   - DATABASE: MLOPS_HOL_DB
 --   - SCHEMA: PREP_DATA, FEATURE_STORE, MODEL_REGISTRY, EXPERIMENTS, ANALYTICS
---   - WAREHOUSE: MLOPS_HOL_PYTHON_WH (MEDIUM), MLOPS_HOL_SQL_WH (XSMALL)
+--   - COMPUTE_POOL: MLOPS_HOL_COMPUTE_POOL (Notebook用コンテナランタイム)
+--   - WAREHOUSE: MLOPS_HOL_SQL_WH (SQLクエリ用 XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
 --   - テーブル: CUSTOMERS, ORDERS
---   - 5つのNotebook
+--   - 5つのNotebook（コンテナランタイムで高速起動）
 ```
 
 ---
@@ -205,7 +206,7 @@ fs = FeatureStore(
     session=session,
     database="MLOPS_HOL_DB",
     name="FEATURE_STORE",
-    default_warehouse="MLOPS_HOL_PYTHON_WH",
+    default_warehouse="MLOPS_HOL_SQL_WH",
     creation_mode=CreationMode.CREATE_IF_NOT_EXIST
 )
 
