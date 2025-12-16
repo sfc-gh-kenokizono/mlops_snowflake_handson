@@ -52,10 +52,8 @@ Feature Store、Model Registry までの一連のワークフローを学びま�
 ```
 mlops_snowflake_handson/
 ├── setup/
-│   ├── 00_setup_environment.sql       # 環境構築
-│   ├── 01_prepare_training_data.sql   # データロード
-│   ├── 02_setup_git_and_notebooks.sql # Git連携 & Notebook自動作成
-│   └── 99_cleanup.sql                 # クリーンナップ
+│   ├── setup.sql                      # 環境構築（オールインワン）
+│   └── cleanup.sql                    # クリーンナップ
 ├── notebooks/
 │   ├── 01_data_exploration.ipynb      # データ探索 + チャーンラベル作成
 │   ├── 02_feature_store.ipynb         # 特徴量ストア
@@ -101,14 +99,8 @@ flowchart LR
 ### 1. 環境構築（Snowsightで実行）
 
 ```sql
--- Step 1: 環境セットアップ
--- setup/00_setup_environment.sql を実行
-
--- Step 2: データロード
--- setup/01_prepare_training_data.sql を実行
-
--- Step 3: Git連携 & Notebook自動作成
--- setup/02_setup_git_and_notebooks.sql を実行
+-- GitHubから setup/setup.sql をコピーして実行（これだけ！）
+-- Git統合、DB作成、データロード、Notebook作成がすべて完了します
 ```
 
 ### 2. ハンズオン実行

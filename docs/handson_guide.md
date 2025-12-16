@@ -134,31 +134,18 @@ flowchart TB
 
 ## 🔧 事前準備
 
-### Step 1: 環境構築
+### 環境構築（1ステップで完了）
 
 ```sql
--- Snowsightでsetup/00_setup_environment.sqlを実行
--- 以下が作成されます:
+-- GitHubから setup/setup.sql をコピーしてSnowsightで実行
+-- 以下がすべて作成されます:
+--   - Git API統合 & Gitリポジトリ
 --   - DATABASE: MLOPS_HOL_DB
 --   - SCHEMA: PREP_DATA, FEATURE_STORE, MODEL_REGISTRY, EXPERIMENTS, ANALYTICS
 --   - WAREHOUSE: MLOPS_HOL_PYTHON_WH (MEDIUM), MLOPS_HOL_SQL_WH (XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
-```
-
-### Step 2: データロード
-
-```sql
--- Snowsightでsetup/01_prepare_training_data.sqlを実行
--- 以下のテーブルが作成されます:
---   - CUSTOMERS: 顧客マスタ
---   - ORDERS: 注文履歴
-```
-
-### Step 3: Notebook作成
-
-```sql
--- Snowsightでsetup/02_setup_git_and_notebooks.sqlを実行
--- GitリポジトリからNotebookが自動作成されます
+--   - テーブル: CUSTOMERS, ORDERS
+--   - 5つのNotebook
 ```
 
 ---
