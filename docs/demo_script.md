@@ -391,7 +391,25 @@ SQL APIの使用状況をモニタリングし、データドリフトなどを�
 | TRAINING_DATASET_V1 | FEATURE_STORE | 学習データ |
 | MODEL_PREDICTIONS_V1 | FEATURE_STORE | 予測結果 |
 | EXPERIMENT_RESULTS | FEATURE_STORE | 実験結果 |
+| **MODEL_LINEAGE** | **MODEL_REGISTRY** | **系譜情報（追跡用）** |
 | CHURN_RISK_CUSTOMERS | ANALYTICS | 施策対象リスト |
+
+### 📢 Lineage（系譜）テーブルの説明
+```
+📢「MODEL_LINEAGEテーブルを見てください。
+ここにはMLOpsの核心である『追跡可能性』が記録されています。
+
+このテーブルで以下が確認できます:
+- どのモデルバージョンが
+- どのFeature Storeバージョンを使い
+- どの実験Runから選ばれたか
+
+例えばSQLで:
+  SELECT * FROM MODEL_LINEAGE WHERE MODEL_VERSION = 'v1';
+と実行すると、v1モデルの全ての系譜情報が取得できます。
+
+これが本格的なMLOpsの追跡可能性です。」
+```
 
 ### 📢 まとめ
 ```
