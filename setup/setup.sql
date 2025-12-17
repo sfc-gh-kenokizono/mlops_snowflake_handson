@@ -12,10 +12,10 @@ Snowflake MLOps ハンズオン - 環境セットアップ（オールインワ�
 📌 作成されるもの:
    - Git API統合 & Gitリポジトリ
    - データベース & スキーマ
-   - コンピュートプール（Notebook用 - コンテナランタイム）
+   - GPUコンピュートプール（GPU_NV_S - コンテナランタイム）
    - ウェアハウス（SQLクエリ用 XS）
    - 顧客・注文データ（CSVからロード）
-   - 5つのNotebook
+   - 5つのNotebook（GPUランタイムで実行）
 
 所要時間: 約2分
 =============================================================================
@@ -242,15 +242,19 @@ SELECT '🎉 セットアップ完了！' AS STATUS;
 📌 次のステップ:
    Snowsight の Projects → Notebooks からNotebookを開いてください
 
-📌 実行順序:
-   1. 01_DATA_EXPLORATION  - データ探索 + チャーンラベル作成
-   2. 02_FEATURE_STORE     - 特徴量作成 + Feature Store登録
+📌 実行順序（必ず順番に実行してください）:
+   1. 01_DATA_EXPLORATION  - データ探索 + チャーンラベル作成 → CHURN_LABELS作成
+   2. 02_FEATURE_STORE     - 特徴量作成 + Feature Store登録 → TRAINING_DATASET作成
    3. 03_MODEL_TRAINING    - モデル学習 + SHAP解析
    4. 04_EXPERIMENT_TRACKING - 複数実験の比較
    5. 05_MODEL_REGISTRY    - モデル登録 + 本番推論
 
+⚠️ 依存関係:
+   各Notebookは前のNotebookで作成されるテーブルに依存しています。
+   必ず順番に、前のNotebookの実行完了後に次を実行してください。
+
 📌 ランタイム:
-   - Notebook: コンピュートプール（コンテナランタイム）
+   - Notebook: GPUコンピュートプール（GPU_NV_S）
    - SQLクエリ: MLOPS_HOL_SQL_WH（XSmall）
 
 📌 クリーンナップ:
