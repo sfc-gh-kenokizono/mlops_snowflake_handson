@@ -241,7 +241,6 @@ fs.register_feature_view(fv_v1, version="v1")
 | **Monetary** | AVG_ORDER_AMOUNT | ✓ | ✓ |
 | **Monetary** | TOTAL_AMOUNT_2024 | - | ✓ |
 | **行動** | RETURN_RATE | - | ✓ |
-| **属性** | SEGMENT | - | ✓ |
 
 ### 学習ポイント
 
