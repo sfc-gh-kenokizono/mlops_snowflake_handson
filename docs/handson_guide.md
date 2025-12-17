@@ -82,10 +82,10 @@ flowchart LR
 |--------|----------|------|------------------|
 | `DAYS_SINCE_LAST_ORDER` | Recency | 最終注文からの日数 | 長いほどチャーンリスク高。最近買っていない顧客は離反しやすい |
 | `TOTAL_ORDER_COUNT` | Frequency | 総注文回数 | 少ないほどチャーンリスク高。購入頻度が低い顧客は関係が浅い |
-| `ORDER_COUNT_2024` | Frequency | 2024年前半の注文回数 | 直近の活発さ。活動が少ないと後半離反しやすい |
+| `ORDER_COUNT_2024_H1` | Frequency | 2024年前半の注文回数 | 直近の活発さ。活動が少ないと後半離反しやすい |
 | `TOTAL_ORDER_AMOUNT` | Monetary | 総注文金額 | 顧客の価値。高額顧客は離反防止の優先度が高い |
 | `AVG_ORDER_AMOUNT` | Monetary | 平均注文金額 | 1回あたりの取引規模。小口顧客は離反しやすい傾向 |
-| `TOTAL_AMOUNT_2024` | Monetary | 2024年前半の注文金額 | 直近の取引規模。取引が減っていると危険信号 |
+| `TOTAL_AMOUNT_2024_H1` | Monetary | 2024年前半の注文金額 | 直近の取引規模。取引が減っていると危険信号 |
 | `RETURN_RATE` | 行動 | 返品率 | 高いほどチャーンリスク高。不満の兆候 |
 
 ### なぜF1スコアが重要なのか
@@ -236,10 +236,10 @@ fs.register_feature_view(fv_v1, version="v1")
 |---------|--------|----|----|
 | **Recency** | DAYS_SINCE_LAST_ORDER | ✓ | ✓ |
 | **Frequency** | TOTAL_ORDER_COUNT | ✓ | ✓ |
-| **Frequency** | ORDER_COUNT_2024 | ✓ | ✓ |
+| **Frequency** | ORDER_COUNT_2024_H1 | ✓ | ✓ |
 | **Monetary** | TOTAL_ORDER_AMOUNT | ✓ | ✓ |
 | **Monetary** | AVG_ORDER_AMOUNT | ✓ | ✓ |
-| **Monetary** | TOTAL_AMOUNT_2024 | - | ✓ |
+| **Monetary** | TOTAL_AMOUNT_2024_H1 | - | ✓ |
 | **行動** | RETURN_RATE | - | ✓ |
 
 ### 学習ポイント
