@@ -369,6 +369,30 @@ model_ref_v2 = registry.log_model(
 )
 ```
 
+### 追跡可能性（Lineage）
+
+MLOpsの核心は「追跡可能性」です。どのモデルが、どの特徴量を使い、どの実験から選ばれたかを追跡できる必要があります。
+
+```python
+# Lineage（系譜）テーブルの作成
+lineage_records = [{
+    "MODEL_VERSION": "v1",
+    "FEATURE_STORE_VERSION": "v2",
+    "EXPERIMENT_RUN": "Baseline",
+    "PARAMETERS": str(params),
+    "F1_SCORE": metrics["f1_score"]
+}]
+session.create_dataframe(lineage_records).write.save_as_table(
+    "MODEL_REGISTRY.MODEL_LINEAGE", mode="overwrite"
+)
+```
+
+| 確認したいこと | 参照先 |
+|--------------|--------|
+| モデル → 特徴量 | MODEL_LINEAGE.FEATURE_STORE_VERSION |
+| モデル → 実験 | MODEL_LINEAGE.EXPERIMENT_RUN |
+| モデル → パラメータ | MODEL_LINEAGE.PARAMETERS |
+
 ---
 
 ## 🎓 まとめ

@@ -133,6 +133,7 @@ Snowflake Notebookを **順番に** 実行（依存関係あり）:
 | **Model Training** | XGBoost, クロスバリデーション, SHAP値 |
 | **Experiment Tracking** | 実験の記録・比較・最適モデルの選択 |
 | **Model Registry** | モデルの登録・バージョン管理(v1→v2)・SQL推論 |
+| **Lineage（系譜）** | Feature Store → Experiment → Model の追跡可能性 |
 
 ## 📈 期待される成果
 
@@ -142,6 +143,7 @@ Snowflake Notebookを **順番に** 実行（依存関係あり）:
 - ✅ Feature Store に登録された特徴量（v1, v2）
 - ✅ 複数の実験記録
 - ✅ Model Registryに登録されたモデル（v1, v2）
+- ✅ **Lineageテーブル**（どのモデル→どの特徴量→どの実験を追跡）
 - ✅ チャーンリスク顧客リスト（リテンション施策対象）
 
 ## 🔗 参考リンク
