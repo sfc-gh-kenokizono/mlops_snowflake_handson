@@ -3,7 +3,7 @@
 # 自動的にパッケージがインストールされます
 #
 # 📌 配置場所: notebooks/ ディレクトリ直下
-# 📌 対象: GPUコンピュートプール（SYSTEM$GPU_RUNTIME）
+# 📌 対象: CPUコンピュートプール（SYSTEM$BASIC_RUNTIME）
 
 name: mlops_handson
 channels:
