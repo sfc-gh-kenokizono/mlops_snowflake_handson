@@ -265,12 +265,12 @@ fs.register_feature_view(fv_v1, version="v1")
 ### 主要なコード
 
 ```python
-from snowflake.ml.modeling.xgboost import XGBClassifier
+import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 
 # ハイパーパラメータチューニング
 random_search = RandomizedSearchCV(
-    estimator=xgb.XGBClassifier(),
+    estimator=xgb.XGBClassifier(random_state=42, eval_metric='logloss'),
     param_distributions=param_distributions,
     n_iter=5,
     scoring='f1',
@@ -278,14 +278,11 @@ random_search = RandomizedSearchCV(
 )
 random_search.fit(X_train, y_train)
 
-# 最良パラメータでSnowpark MLモデルを学習
-best_model = XGBClassifier(
-    input_cols=FEATURE_COLS,
-    label_cols=LABEL_COL,
-    **random_search.best_params_
-)
-best_model.fit(train_df)
+# 最良モデルを取得
+best_model = random_search.best_estimator_
 ```
+
+> 💡 **Note**: コンテナランタイム互換性のため、sklearn版XGBoostを使用しています。
 
 ### 評価指標
 
@@ -358,6 +355,7 @@ model_ref = registry.log_model(
     model_name="CUSTOMER_CHURN_PREDICTOR",
     version_name="v1",
     metrics=metrics,
+    sample_input_data=X_train.head(10),  # sklearn版モデルでは必須
     comment="チャーン予測モデル v1"
 )
 
