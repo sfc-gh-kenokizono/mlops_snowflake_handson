@@ -38,17 +38,13 @@ DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION;
 DROP DATABASE IF EXISTS MLOPS_HOL_DB;
 
 -- ============================================
--- 6. コンピュートプールの削除
+-- 6. ウェアハウスの削除
 -- ============================================
-DROP COMPUTE POOL IF EXISTS MLOPS_HOL_COMPUTE_POOL;
-
--- ============================================
--- 7. ウェアハウスの削除
--- ============================================
+DROP WAREHOUSE IF EXISTS MLOPS_HOL_PYTHON_WH;
 DROP WAREHOUSE IF EXISTS MLOPS_HOL_SQL_WH;
 
 -- ============================================
--- 8. ロールの削除
+-- 7. ロールの削除
 -- ============================================
 DROP ROLE IF EXISTS MLOPS_HOL_ROLE;
 

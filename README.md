@@ -13,8 +13,6 @@
 データからチャーンを定義し、ラベルを作成するMLの基本ステップから始め、
 Feature Store、Model Registry までの一連のワークフローを学びます。
 
-**NotebookはCPUコンピュートプール（コンテナランタイム）で動作** - ウェアハウスより起動が早く、コスト効率が良いです。
-
 ## 🎯 ハンズオンの目的
 
 - Snowflake NotebookでのPythonによる機械学習ワークフローの体験
@@ -54,21 +52,21 @@ Feature Store、Model Registry までの一連のワークフローを学びま�
 ```
 mlops_snowflake_handson/
 ├── setup/
-│   ├── setup.sql         # 環境構築（オールインワン）
-│   └── cleanup.sql       # クリーンナップ
+│   ├── 00_setup_environment.sql       # 環境構築
+│   ├── 01_prepare_training_data.sql   # データロード
+│   ├── 02_setup_git_and_notebooks.sql # Git連携 & Notebook自動作成
+│   └── 99_cleanup.sql                 # クリーンナップ
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb     # データ探索 + チャーンラベル作成
-│   ├── 02_feature_store.ipynb        # 特徴量ストア
-│   ├── 03_model_training.ipynb       # モデル学習 + CV + SHAP
-│   ├── 04_experiment_tracking.ipynb  # 実験管理（複数モデル比較）
-│   ├── 05_model_registry.ipynb       # モデル登録・本番デプロイ
-│   └── environment.yml               # パッケージ依存関係
+│   ├── 01_data_exploration.ipynb      # データ探索 + チャーンラベル作成
+│   ├── 02_feature_store.ipynb         # 特徴量ストア
+│   ├── 03_model_training.ipynb        # モデル学習 + CV + SHAP
+│   ├── 04_experiment_tracking.ipynb   # 実験管理（複数モデル比較）
+│   └── 05_model_registry.ipynb        # モデル登録・本番デプロイ
 ├── data/
-│   ├── customers.csv     # 顧客マスタ
-│   └── orders.csv        # 注文履歴
+│   ├── customers.csv                  # 顧客マスタ
+│   └── orders.csv                     # 注文履歴
 └── docs/
-    ├── handson_guide.md  # 詳細ガイド
-    └── demo_script.md    # デモスクリプト
+    └── handson_guide.md               # 詳細ガイド
 ```
 
 ## 🔄 MLOpsワークフロー
@@ -103,21 +101,25 @@ flowchart LR
 ### 1. 環境構築（Snowsightで実行）
 
 ```sql
--- GitHubから setup/setup.sql をコピーして実行（これだけ！）
--- Git統合、DB作成、データロード、Notebook作成がすべて完了します
+-- Step 1: 環境セットアップ
+-- setup/00_setup_environment.sql を実行
+
+-- Step 2: データロード
+-- setup/01_prepare_training_data.sql を実行
+
+-- Step 3: Git連携 & Notebook自動作成
+-- setup/02_setup_git_and_notebooks.sql を実行
 ```
 
 ### 2. ハンズオン実行
 
-Snowflake Notebookを **順番に** 実行（依存関係あり）:
+Snowflake Notebookを順番に実行:
 
-1. `01_DATA_EXPLORATION` - データ理解 + チャーンラベル作成 → **CHURN_LABELS作成**
-2. `02_FEATURE_STORE` - 特徴量の設計・登録 → **TRAINING_DATASET作成**
+1. `01_DATA_EXPLORATION` - データ理解 + チャーンラベル作成
+2. `02_FEATURE_STORE` - 特徴量の設計・登録
 3. `03_MODEL_TRAINING` - モデル学習
 4. `04_EXPERIMENT_TRACKING` - 実験管理
 5. `05_MODEL_REGISTRY` - モデル登録・本番活用
-
-⚠️ **重要**: 各Notebookは前のNotebookで作成されるテーブルに依存しています。必ず順番に実行してください。
 
 ## 📋 前提条件
 
@@ -133,7 +135,6 @@ Snowflake Notebookを **順番に** 実行（依存関係あり）:
 | **Model Training** | XGBoost, クロスバリデーション, SHAP値 |
 | **Experiment Tracking** | 実験の記録・比較・最適モデルの選択 |
 | **Model Registry** | モデルの登録・バージョン管理(v1→v2)・SQL推論 |
-| **Lineage（系譜）** | Feature Store → Experiment → Model の追跡可能性 |
 
 ## 📈 期待される成果
 
@@ -143,7 +144,6 @@ Snowflake Notebookを **順番に** 実行（依存関係あり）:
 - ✅ Feature Store に登録された特徴量（v1, v2）
 - ✅ 複数の実験記録
 - ✅ Model Registryに登録されたモデル（v1, v2）
-- ✅ **Lineageテーブル**（どのモデル→どの特徴量→どの実験を追跡）
 - ✅ チャーンリスク顧客リスト（リテンション施策対象）
 
 ## 🔗 参考リンク

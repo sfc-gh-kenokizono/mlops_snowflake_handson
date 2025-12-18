@@ -1,27 +1,15 @@
 # Snowflake Notebook 環境設定
 # このファイルはNotebookと同じディレクトリに配置することで
 # 自動的にパッケージがインストールされます
-#
-# 📌 配置場所: notebooks/ ディレクトリ直下
-# 📌 対象: CPUコンピュートプール（SYSTEM$BASIC_RUNTIME）
 
 name: mlops_handson
 channels:
   - snowflake
 dependencies:
-  # Snowflake ML（Feature Store, Model Registry, Experiment Tracking）
   - snowflake-ml-python
-  
-  # 機械学習
-  - xgboost
-  - scikit-learn
-  
-  # データ処理
-  - pandas
-  - numpy
-  - scipy
-  
-  # 可視化・解釈
   - shap
   - matplotlib
+  - xgboost
+  - scikit-learn
+  - scipy
 

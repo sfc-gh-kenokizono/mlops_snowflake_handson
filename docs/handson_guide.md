@@ -82,10 +82,10 @@ flowchart LR
 |--------|----------|------|------------------|
 | `DAYS_SINCE_LAST_ORDER` | Recency | 最終注文からの日数 | 長いほどチャーンリスク高。最近買っていない顧客は離反しやすい |
 | `TOTAL_ORDER_COUNT` | Frequency | 総注文回数 | 少ないほどチャーンリスク高。購入頻度が低い顧客は関係が浅い |
-| `ORDER_COUNT_2024_H1` | Frequency | 2024年前半の注文回数 | 直近の活発さ。活動が少ないと後半離反しやすい |
+| `ORDER_COUNT_2024` | Frequency | 2024年前半の注文回数 | 直近の活発さ。活動が少ないと後半離反しやすい |
 | `TOTAL_ORDER_AMOUNT` | Monetary | 総注文金額 | 顧客の価値。高額顧客は離反防止の優先度が高い |
 | `AVG_ORDER_AMOUNT` | Monetary | 平均注文金額 | 1回あたりの取引規模。小口顧客は離反しやすい傾向 |
-| `TOTAL_AMOUNT_2024_H1` | Monetary | 2024年前半の注文金額 | 直近の取引規模。取引が減っていると危険信号 |
+| `TOTAL_AMOUNT_2024` | Monetary | 2024年前半の注文金額 | 直近の取引規模。取引が減っていると危険信号 |
 | `RETURN_RATE` | 行動 | 返品率 | 高いほどチャーンリスク高。不満の兆候 |
 
 ### なぜF1スコアが重要なのか
@@ -142,14 +142,11 @@ flowchart TB
 --   - Git API統合 & Gitリポジトリ
 --   - DATABASE: MLOPS_HOL_DB
 --   - SCHEMA: PREP_DATA, FEATURE_STORE, MODEL_REGISTRY, EXPERIMENTS, ANALYTICS
---   - COMPUTE_POOL: MLOPS_HOL_COMPUTE_POOL (CPU_X64_M, MAX_NODES=10)
---   - WAREHOUSE: MLOPS_HOL_SQL_WH (SQLクエリ用 XSMALL)
+--   - WAREHOUSE: MLOPS_HOL_PYTHON_WH (MEDIUM), MLOPS_HOL_SQL_WH (XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
 --   - テーブル: CUSTOMERS, ORDERS
---   - 5つのNotebook（コンテナランタイムで高速起動）
+--   - 5つのNotebook
 ```
-
-⚠️ **重要**: Notebookは依存関係があるため、1→2→3→4→5の順番で実行してください。
 
 ---
 
@@ -208,7 +205,7 @@ fs = FeatureStore(
     session=session,
     database="MLOPS_HOL_DB",
     name="FEATURE_STORE",
-    default_warehouse="MLOPS_HOL_SQL_WH",
+    default_warehouse="MLOPS_HOL_PYTHON_WH",
     creation_mode=CreationMode.CREATE_IF_NOT_EXIST
 )
 
@@ -236,11 +233,12 @@ fs.register_feature_view(fv_v1, version="v1")
 |---------|--------|----|----|
 | **Recency** | DAYS_SINCE_LAST_ORDER | ✓ | ✓ |
 | **Frequency** | TOTAL_ORDER_COUNT | ✓ | ✓ |
-| **Frequency** | ORDER_COUNT_2024_H1 | ✓ | ✓ |
+| **Frequency** | ORDER_COUNT_2024 | ✓ | ✓ |
 | **Monetary** | TOTAL_ORDER_AMOUNT | ✓ | ✓ |
 | **Monetary** | AVG_ORDER_AMOUNT | ✓ | ✓ |
-| **Monetary** | TOTAL_AMOUNT_2024_H1 | - | ✓ |
+| **Monetary** | TOTAL_AMOUNT_2024 | - | ✓ |
 | **行動** | RETURN_RATE | - | ✓ |
+| **属性** | SEGMENT | - | ✓ |
 
 ### 学習ポイント
 
@@ -265,12 +263,12 @@ fs.register_feature_view(fv_v1, version="v1")
 ### 主要なコード
 
 ```python
-import xgboost as xgb
+from snowflake.ml.modeling.xgboost import XGBClassifier
 from sklearn.model_selection import RandomizedSearchCV
 
 # ハイパーパラメータチューニング
 random_search = RandomizedSearchCV(
-    estimator=xgb.XGBClassifier(random_state=42, eval_metric='logloss'),
+    estimator=xgb.XGBClassifier(),
     param_distributions=param_distributions,
     n_iter=5,
     scoring='f1',
@@ -278,11 +276,14 @@ random_search = RandomizedSearchCV(
 )
 random_search.fit(X_train, y_train)
 
-# 最良モデルを取得
-best_model = random_search.best_estimator_
+# 最良パラメータでSnowpark MLモデルを学習
+best_model = XGBClassifier(
+    input_cols=FEATURE_COLS,
+    label_cols=LABEL_COL,
+    **random_search.best_params_
+)
+best_model.fit(train_df)
 ```
-
-> 💡 **Note**: コンテナランタイム互換性のため、sklearn版XGBoostを使用しています。
 
 ### 評価指標
 
@@ -355,7 +356,6 @@ model_ref = registry.log_model(
     model_name="CUSTOMER_CHURN_PREDICTOR",
     version_name="v1",
     metrics=metrics,
-    sample_input_data=X_train.head(10),  # sklearn版モデルでは必須
     comment="チャーン予測モデル v1"
 )
 
@@ -368,30 +368,6 @@ model_ref_v2 = registry.log_model(
     comment="チャーン予測モデル v2 - パラメータ改善"
 )
 ```
-
-### 追跡可能性（Lineage）
-
-MLOpsの核心は「追跡可能性」です。どのモデルが、どの特徴量を使い、どの実験から選ばれたかを追跡できる必要があります。
-
-```python
-# Lineage（系譜）テーブルの作成
-lineage_records = [{
-    "MODEL_VERSION": "v1",
-    "FEATURE_STORE_VERSION": "v2",
-    "EXPERIMENT_RUN": "Baseline",
-    "PARAMETERS": str(params),
-    "F1_SCORE": metrics["f1_score"]
-}]
-session.create_dataframe(lineage_records).write.save_as_table(
-    "MODEL_REGISTRY.MODEL_LINEAGE", mode="overwrite"
-)
-```
-
-| 確認したいこと | 参照先 |
-|--------------|--------|
-| モデル → 特徴量 | MODEL_LINEAGE.FEATURE_STORE_VERSION |
-| モデル → 実験 | MODEL_LINEAGE.EXPERIMENT_RUN |
-| モデル → パラメータ | MODEL_LINEAGE.PARAMETERS |
 
 ---
 
