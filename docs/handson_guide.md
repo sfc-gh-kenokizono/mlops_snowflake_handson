@@ -303,7 +303,8 @@ best_model.fit(train_df)
 
 - 複数のモデル・パラメータで実験を実行する
 - パラメータとメトリクスを記録・比較する
-- 最適なモデルを選択する
+- **過学習を検出する（Train/Testスコア比較）**
+- 最適なモデルを選択し、Model Registryに登録する
 
 ### 主要なコード
 
@@ -316,18 +317,38 @@ exp.set_experiment("CHURN_PREDICTION_EXPERIMENT")
 
 # Runの実行
 with exp.start_run("run_baseline"):
-    exp.log_params({"max_depth": 3, "learning_rate": 0.1})
-    model.fit(train_df)
-    exp.log_metrics({"accuracy": 0.85, "recall": 0.70})
+    exp.log_param("max_depth", 3)
+    model.fit(X_train, y_train)
+    
+    # テストメトリクス
+    exp.log_metric("f1_score", test_f1)
+    
+    # 訓練メトリクス（過学習チェック）
+    exp.log_metric("train_f1_score", train_f1)
+    exp.log_metric("overfit_gap_f1", train_f1 - test_f1)
+    
+    # 画像アーティファクト
+    exp.log_artifact("/tmp/shap_summary.png")
+
+# 最良モデルをModel Registryに登録
+exp.log_model(model, "CUSTOMER_CHURN_PREDICTOR", version_name="v1_{timestamp}")
 ```
 
 ### 実験設計
 
 | Run | 特徴 | 目的 |
 |-----|------|------|
-| run_baseline | デフォルトパラメータ | 基準値の確立 |
-| run_deeper | max_depth増加 | 複雑なパターンの学習 |
-| run_balanced | scale_pos_weight増加 | Recall向上 |
+| Baseline | デフォルトパラメータ | 基準値の確立 |
+| DeepTree | max_depth増加 | 複雑なパターンの学習 |
+| Conservative | 浅い木 + 低学習率 | 過学習防止 |
+
+### 過学習チェック
+
+| 指標 | 説明 |
+|------|------|
+| Train F1 | 訓練データでのF1スコア |
+| Test F1 | テストデータでのF1スコア |
+| Gap | Train F1 - Test F1（大きいほど過学習）|
 
 ---
 
@@ -335,7 +356,7 @@ with exp.start_run("run_baseline"):
 
 ### 目的
 
-- 最良モデルをModel Registryに登録する
+- **Section 4で登録したv1モデルを確認する**
 - バージョン管理（v1 → v2）を体験する
 - 登録したモデルで推論を実行する
 
@@ -351,20 +372,20 @@ registry = Registry(
     schema_name="MODEL_REGISTRY"
 )
 
-# モデルの登録（v1）
-model_ref = registry.log_model(
-    model=best_model,
-    model_name="CUSTOMER_CHURN_PREDICTOR",
-    version_name="v1",
-    metrics=metrics,
-    comment="チャーン予測モデル v1"
-)
+# v1はSection 4でexp.log_model()で登録済み
+# バージョン名は v1_{timestamp} 形式
 
-# v2の登録
+# v1のメトリクスを確認
+model = registry.get_model("CUSTOMER_CHURN_PREDICTOR")
+v1_version = model.version("v1_20241219_123456")  # 動的に取得
+v1_metrics = v1_version.get_metric("*")
+
+# v2の追加登録（タイムスタンプ付きバージョン名）
+v2_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 model_ref_v2 = registry.log_model(
     model=improved_model,
     model_name="CUSTOMER_CHURN_PREDICTOR",
-    version_name="v2",
+    version_name=f"v2_{v2_timestamp}",
     metrics=v2_metrics,
     comment="チャーン予測モデル v2 - パラメータ改善"
 )
