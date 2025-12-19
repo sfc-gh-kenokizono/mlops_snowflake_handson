@@ -269,6 +269,38 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 
 ---
 
+## Step 6: Experiment Viewer（10分）
+
+### 実行
+1. **06_EXPERIMENT_VIEWER_APP** Notebookを開く
+2. セルに記載されている手順に従い、Streamlitアプリを作成
+
+### 📢 説明ポイント
+
+#### 6.1 Streamlitアプリの作成
+```
+「過去の実験結果をワンクリックで確認できるアプリを作ります。
+Snowsight UIでは画像アーティファクトを直接見れないので、
+Streamlit in Snowflakeで可視化アプリを作成します。
+
+- 全Runのメトリクス比較（テーブル・棒グラフ）
+- 過学習チェック（Train F1 vs Test F1のGap表示）
+- Feature Importance / SHAP値の可視化」
+```
+
+### 📊 UI確認ポイント
+- **Projects → Streamlit** を開く
+- 「EXPERIMENT_VIEWER」アプリを起動
+- 各Runのメトリクスが比較できることを確認
+
+```
+📢「Streamlit in Snowflakeを使えば、データを外部に出さずに
+インタラクティブなダッシュボードを作成できます。
+実験結果の振り返りや、ステークホルダーへの共有に便利です。」
+```
+
+---
+
 ## 📊 最終成果物の確認（5分）
 
 ### Data → Tables で確認

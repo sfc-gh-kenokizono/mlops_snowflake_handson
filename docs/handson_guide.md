@@ -393,6 +393,40 @@ model_ref_v2 = registry.log_model(
 
 ---
 
+## 📝 Section 6: Experiment Viewer
+
+### 目的
+
+- **Streamlit in Snowflake** で実験結果を閲覧できるアプリを作成
+- 過去の実験を簡単に振り返れるようにする
+
+### 主要なコード
+
+```python
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+
+# セッション取得
+session = get_active_session()
+
+# 実験結果を取得
+df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
+
+# メトリクス比較テーブル（過学習チェック付き）
+comparison_df = df[["RUN_NAME", "F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1", "ROC_AUC"]].copy()
+st.dataframe(comparison_df)
+```
+
+### 学習ポイント
+
+| 機能 | 説明 |
+|------|------|
+| Streamlit in Snowflake | データを外部に出さずにアプリ作成 |
+| 過学習チェック | Train F1 vs Test F1 のGap表示 |
+| Feature Importance可視化 | Altairで棒グラフ化 |
+
+---
+
 ## 🎓 まとめ
 
 ### 構築したMLOpsパイプライン
