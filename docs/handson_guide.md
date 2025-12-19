@@ -206,7 +206,7 @@ fs = FeatureStore(
     session=session,
     database="MLOPS_HOL_DB",
     name="FEATURE_STORE",
-    default_warehouse="MLOPS_HOL_PYTHON_WH",
+    default_warehouse="MLOPS_HOL_SQL_WH",
     creation_mode=CreationMode.CREATE_IF_NOT_EXIST
 )
 
