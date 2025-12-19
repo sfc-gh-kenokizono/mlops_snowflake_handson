@@ -14,7 +14,7 @@
 
 ```mermaid
 flowchart LR
-    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Training] --> E[Experiments] --> F[Registry] --> G[Production]
+    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Training] --> E[Experiments] --> F[Registry] --> G[Viewer] --> H[Production]
 ```
 
 | Section | 内容 |
@@ -22,8 +22,9 @@ flowchart LR
 | **1. Data Exploration** | データ探索 + チャーンラベル作成 |
 | **2. Feature Store** | Entity, FeatureView, v1→v2 |
 | **3. Training** | XGBoost, CV, SHAP |
-| **4. Experiments** | 複数Run比較 |
+| **4. Experiments** | 複数Run比較、Model Registry連携 |
 | **5. Registry** | モデル登録・デプロイ |
+| **6. Experiment Viewer** | Streamlitアプリで実験結果を可視化 |
 | **Production** | SQL推論 |
 
 ---
@@ -145,7 +146,7 @@ flowchart TB
 --   - WAREHOUSE: MLOPS_HOL_PYTHON_WH (MEDIUM), MLOPS_HOL_SQL_WH (XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
 --   - テーブル: CUSTOMERS, ORDERS
---   - 5つのNotebook
+--   - 6つのNotebook
 ```
 
 ---
@@ -378,9 +379,10 @@ model_ref_v2 = registry.log_model(
 1. **データ探索 + ラベル作成**: チャーンを定義し、ラベルを作成
 2. **特徴量管理**: Feature Storeで特徴量をバージョン管理
 3. **モデル学習**: ハイパーパラメータチューニング、CV、SHAP
-4. **実験管理**: 複数実験を記録・比較
+4. **実験管理**: 複数実験を記録・比較、Model Registry連携
 5. **モデル管理**: Model Registryでバージョン管理
-6. **本番活用**: チャーンリスク顧客リストを生成
+6. **実験可視化**: Streamlitアプリで実験結果を確認
+7. **本番活用**: チャーンリスク顧客リストを生成
 
 ### ビジネス価値
 

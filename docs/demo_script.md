@@ -2,7 +2,7 @@
 
 ## 📋 概要
 
-**所要時間**: 約90分  
+**所要時間**: 約100分  
 **対象者**: データサイエンティスト、MLエンジニア、データエンジニア
 
 ---
@@ -43,7 +43,7 @@ Snowflake上でMLOpsの一連のワークフローを体験していただきま
 - Git連携でリポジトリを登録
 - データベース、ウェアハウスの作成
 - CSVデータのロード
-- 5つのNotebookの自動作成
+- 6つのNotebookの自動作成
 約2分で完了します。」
 ```
 
@@ -274,8 +274,9 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 1. データ探索 → チャーンの定義・ラベル作成
 2. Feature Store → 特徴量のバージョン管理
 3. Model Training → ハイパラチューニング、SHAP解析
-4. Experiment Tracking → 複数モデルの比較
+4. Experiment Tracking → 複数モデルの比較、Model Registry連携
 5. Model Registry → モデルのバージョン管理、本番デプロイ
+6. Experiment Viewer → Streamlitアプリで実験結果を可視化
 
 すべてSnowflake上で完結しています。
 データの移動なし、外部ツール不要でMLOpsを実現できます。」
