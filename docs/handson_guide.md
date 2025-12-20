@@ -372,6 +372,47 @@ model_ref_v2 = registry.log_model(
 
 ---
 
+## 📝 Section 6: Experiment Viewer
+
+### 目的
+
+- Streamlitアプリで実験結果を可視化する
+- 複数Runの比較を容易にする
+- 過学習検出（Train vs Test F1）を視覚的に確認する
+
+### 主要なコード
+
+```python
+import streamlit as st
+import altair as alt
+
+# 実験結果の取得
+results_df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
+
+# 比較テーブルの表示
+st.dataframe(results_df[[
+    "RUN_NAME", "TEST_F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1"
+]])
+
+# Feature Importanceの比較チャート
+chart = alt.Chart(importance_df).mark_bar().encode(
+    x=alt.X('IMPORTANCE:Q'),
+    y=alt.Y('FEATURE:N', sort='-x'),
+    color='RUN_NAME:N'
+)
+st.altair_chart(chart)
+```
+
+### 学習ポイント
+
+| ポイント | 説明 |
+|---------|------|
+| Streamlit in Snowflake | Notebook内でStreamlitアプリを実行可能 |
+| 比較ビュー | 全Runのメトリクスを一覧で比較 |
+| 過学習検出 | Train F1とTest F1のギャップで過学習を検出 |
+
+---
+
 ## 🎓 まとめ
 
 ### 構築したMLOpsパイプライン
@@ -381,7 +422,8 @@ model_ref_v2 = registry.log_model(
 3. **モデル学習**: ハイパーパラメータチューニング、CV、SHAP
 4. **実験管理**: 複数実験を記録・比較
 5. **モデル管理**: Model Registryでバージョン管理
-6. **本番活用**: チャーンリスク顧客リストを生成
+6. **実験可視化**: Streamlitアプリで実験結果を確認
+7. **本番活用**: チャーンリスク顧客リストを生成
 
 ### ビジネス価値
 
@@ -399,3 +441,4 @@ model_ref_v2 = registry.log_model(
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowflake ML Experiments](https://docs.snowflake.com/en/developer-guide/snowflake-ml/experiments)
 - [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)

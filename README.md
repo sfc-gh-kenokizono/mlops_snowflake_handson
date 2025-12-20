@@ -20,6 +20,7 @@ Feature Store、Model Registry までの一連のワークフローを学びま�
 - Snowflake **Feature Store** による特徴量の一元管理と再利用
 - Snowflake **Experiment Tracking** による実験の効率的な管理と比較
 - Snowflake **Model Registry** によるモデルのバージョン管理とデプロイ
+- **Streamlit** による実験結果の可視化
 
 ## 📊 使用データ
 
@@ -52,28 +53,29 @@ Feature Store、Model Registry までの一連のワークフローを学びま�
 ```
 mlops_snowflake_handson/
 ├── setup/
-│   ├── 00_setup_environment.sql       # 環境構築
-│   ├── 01_prepare_training_data.sql   # データロード
-│   ├── 02_setup_git_and_notebooks.sql # Git連携 & Notebook自動作成
-│   └── 99_cleanup.sql                 # クリーンナップ
+│   ├── setup.sql                         # 環境セットアップ（オールインワン）
+│   └── cleanup.sql                       # クリーンナップ
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb      # データ探索 + チャーンラベル作成
-│   ├── 02_feature_store.ipynb         # 特徴量ストア
-│   ├── 03_model_training.ipynb        # モデル学習 + CV + SHAP
-│   ├── 04_experiment_tracking.ipynb   # 実験管理（複数モデル比較）
-│   └── 05_model_registry.ipynb        # モデル登録・本番デプロイ
+│   ├── 01_data_exploration.ipynb         # データ探索 + チャーンラベル作成
+│   ├── 02_feature_store.ipynb            # 特徴量ストア
+│   ├── 03_model_training.ipynb           # モデル学習 + CV + SHAP
+│   ├── 04_experiment_tracking.ipynb      # 実験管理（複数モデル比較）
+│   ├── 05_model_registry.ipynb           # モデル登録・本番デプロイ
+│   ├── 06_experiment_viewer_app.ipynb    # Streamlit実験ビューア
+│   └── environment.yml                   # パッケージ依存関係
 ├── data/
-│   ├── customers.csv                  # 顧客マスタ
-│   └── orders.csv                     # 注文履歴
+│   ├── customers.csv                     # 顧客マスタ
+│   └── orders.csv                        # 注文履歴
 └── docs/
-    └── handson_guide.md               # 詳細ガイド
+    ├── handson_guide.md                  # 詳細ガイド
+    └── demo_script.md                    # デモ実行スクリプト
 ```
 
 ## 🔄 MLOpsワークフロー
 
 ```mermaid
 flowchart LR
-    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Model Training] --> E[Experiment Tracking] --> F[Model Registry]
+    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Model Training] --> E[Experiment Tracking] --> F[Model Registry] --> G[Experiment Viewer]
 ```
 
 | Section | 内容 |
@@ -83,32 +85,34 @@ flowchart LR
 | **3. Model Training** | XGBoost, CV, Feature Importance, SHAP |
 | **4. Experiment Tracking** | 複数Run比較, メトリクス記録 |
 | **5. Model Registry** | バージョン管理, 本番デプロイ, SQL推論 |
+| **6. Experiment Viewer** | Streamlitアプリで実験結果を可視化 |
 
 ## ⏱️ 所要時間
 
 | セクション | 内容 | 主なトピック | 時間 |
 |-----------|------|-------------|------|
-| 事前準備 | SQLスクリプト実行 | 環境構築、データロード | 10分 |
+| 事前準備 | setup.sql実行 | 環境構築、データロード、Notebook作成 | 5分 |
 | Section 1 | データ探索 | EDA、チャーン定義・ラベル作成 | 15分 |
 | Section 2 | Feature Store | Entity, FeatureView, v1→v2 | 20分 |
 | Section 3 | モデル学習 | XGBoost, CV, ハイパラチューニング, SHAP | 20分 |
 | Section 4 | Experiment Tracking | 複数モデル比較、パラメータ管理 | 15分 |
 | Section 5 | Model Registry | 登録、v1→v2、SQL推論 | 10分 |
-| **合計** | | | **約90分** |
+| Section 6 | Experiment Viewer | Streamlitアプリで可視化 | 10分 |
+| **合計** | | | **約95分** |
 
 ## 🚀 クイックスタート
 
 ### 1. 環境構築（Snowsightで実行）
 
 ```sql
--- Step 1: 環境セットアップ
--- setup/00_setup_environment.sql を実行
-
--- Step 2: データロード
--- setup/01_prepare_training_data.sql を実行
-
--- Step 3: Git連携 & Notebook自動作成
--- setup/02_setup_git_and_notebooks.sql を実行
+-- setup/setup.sql を Snowsight で実行
+-- 以下がすべて作成されます:
+--   - Git API統合 & Gitリポジトリ
+--   - データベース & スキーマ
+--   - コンピュートプール（CPU_X64_M - コンテナランタイム）
+--   - ウェアハウス（SQLクエリ用 XS）
+--   - 顧客・注文データ
+--   - 6つのNotebook（コンテナランタイムで実行）
 ```
 
 ### 2. ハンズオン実行
@@ -120,6 +124,7 @@ Snowflake Notebookを順番に実行:
 3. `03_MODEL_TRAINING` - モデル学習
 4. `04_EXPERIMENT_TRACKING` - 実験管理
 5. `05_MODEL_REGISTRY` - モデル登録・本番活用
+6. `06_EXPERIMENT_VIEWER_APP` - Streamlitアプリで実験結果可視化
 
 ## 📋 前提条件
 
@@ -135,6 +140,7 @@ Snowflake Notebookを順番に実行:
 | **Model Training** | XGBoost, クロスバリデーション, SHAP値 |
 | **Experiment Tracking** | 実験の記録・比較・最適モデルの選択 |
 | **Model Registry** | モデルの登録・バージョン管理(v1→v2)・SQL推論 |
+| **Experiment Viewer** | Streamlitによる実験結果の可視化・比較 |
 
 ## 📈 期待される成果
 
@@ -145,6 +151,7 @@ Snowflake Notebookを順番に実行:
 - ✅ 複数の実験記録
 - ✅ Model Registryに登録されたモデル（v1, v2）
 - ✅ チャーンリスク顧客リスト（リテンション施策対象）
+- ✅ Streamlit実験ビューア
 
 ## 🔗 参考リンク
 
@@ -152,3 +159,4 @@ Snowflake Notebookを順番に実行:
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowflake ML Experiments](https://docs.snowflake.com/en/developer-guide/snowflake-ml/experiments)
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)

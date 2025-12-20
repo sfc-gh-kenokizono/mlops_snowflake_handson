@@ -2,7 +2,7 @@
 
 ## 📋 概要
 
-**所要時間**: 約90分  
+**所要時間**: 約100分  
 **対象者**: データサイエンティスト、MLエンジニア、データエンジニア
 
 ---
@@ -256,6 +256,46 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 
 ---
 
+## Step 6: Experiment Viewer（10分）
+
+### 実行
+1. **06_EXPERIMENT_VIEWER_APP** Notebookを開く
+2. Streamlitアプリのコードを確認
+3. 「Streamlit」タブに切り替えて実行
+
+### 📢 説明ポイント
+
+#### 6.1 Streamlitアプリの構成
+```
+「実験結果を可視化するStreamlitアプリを作成しました。
+Snowflake Notebook内でStreamlitを実行できます。
+
+このアプリでは:
+- 各実験Runのメトリクス比較
+- Feature Importanceの比較
+- 過学習検出（Train vs Test F1スコア）
+をインタラクティブに確認できます。」
+```
+
+#### 6.2 比較ビュー
+```
+「比較ビューでは、全Runを一覧で比較できます。
+- Test F1、Train F1、過学習Gap
+- どのモデルが最も汎化性能が高いか一目でわかります」
+```
+
+### 📊 UI確認ポイント
+- Streamlitアプリが正常に表示されることを確認
+- 各タブ（比較ビュー、詳細ビュー）を切り替えてデモ
+
+```
+📢「Streamlit in Snowflakeを使うと、
+データを移動せずにインタラクティブな可視化が可能です。
+実験結果の比較や報告に活用できます。」
+```
+
+---
+
 ## 📊 最終成果物の確認（5分）
 
 ### Data → Tables で確認
@@ -276,6 +316,7 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 3. Model Training → ハイパラチューニング、SHAP解析
 4. Experiment Tracking → 複数モデルの比較
 5. Model Registry → モデルのバージョン管理、本番デプロイ
+6. Experiment Viewer → Streamlitアプリで実験結果を可視化
 
 すべてSnowflake上で完結しています。
 データの移動なし、外部ツール不要でMLOpsを実現できます。」

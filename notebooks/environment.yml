@@ -9,6 +9,7 @@ dependencies:
   - snowflake-ml-python
   - shap
   - matplotlib
+  - seaborn
   - xgboost
   - scikit-learn
   - scipy
