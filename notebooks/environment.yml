@@ -9,7 +9,6 @@ dependencies:
   - snowflake-ml-python
   - shap
   - matplotlib
-  - seaborn        # Confusion Matrix可視化用
   - xgboost
   - scikit-learn
   - scipy

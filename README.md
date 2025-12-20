@@ -11,7 +11,7 @@
 顧客チャーン（離反）予測モデルを構築しながら、SnowflakeのMLOps機能を体験します。
 
 データからチャーンを定義し、ラベルを作成するMLの基本ステップから始め、
-Feature Store、Experiment Tracking、Model Registry、Streamlit可視化までの一連のワークフローを学びます。
+Feature Store、Model Registry までの一連のワークフローを学びます。
 
 ## 🎯 ハンズオンの目的
 
@@ -20,7 +20,6 @@ Feature Store、Experiment Tracking、Model Registry、Streamlit可視化まで�
 - Snowflake **Feature Store** による特徴量の一元管理と再利用
 - Snowflake **Experiment Tracking** による実験の効率的な管理と比較
 - Snowflake **Model Registry** によるモデルのバージョン管理とデプロイ
-- **Streamlit in Snowflake** による実験結果の可視化
 
 ## 📊 使用データ
 
@@ -53,28 +52,28 @@ Feature Store、Experiment Tracking、Model Registry、Streamlit可視化まで�
 ```
 mlops_snowflake_handson/
 ├── setup/
-│   ├── setup.sql                         # 環境構築（オールインワン）
-│   └── cleanup.sql                       # クリーンナップ
+│   ├── 00_setup_environment.sql       # 環境構築
+│   ├── 01_prepare_training_data.sql   # データロード
+│   ├── 02_setup_git_and_notebooks.sql # Git連携 & Notebook自動作成
+│   └── 99_cleanup.sql                 # クリーンナップ
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb         # データ探索 + チャーンラベル作成
-│   ├── 02_feature_store.ipynb            # 特徴量ストア
-│   ├── 03_model_training.ipynb           # モデル学習 + CV + SHAP
-│   ├── 04_experiment_tracking.ipynb      # 実験管理（複数モデル比較）
-│   ├── 05_model_registry.ipynb           # モデル登録・本番デプロイ
-│   └── 06_experiment_viewer_app.ipynb    # Streamlitアプリ作成
+│   ├── 01_data_exploration.ipynb      # データ探索 + チャーンラベル作成
+│   ├── 02_feature_store.ipynb         # 特徴量ストア
+│   ├── 03_model_training.ipynb        # モデル学習 + CV + SHAP
+│   ├── 04_experiment_tracking.ipynb   # 実験管理（複数モデル比較）
+│   └── 05_model_registry.ipynb        # モデル登録・本番デプロイ
 ├── data/
-│   ├── customers.csv                     # 顧客マスタ
-│   └── orders.csv                        # 注文履歴
+│   ├── customers.csv                  # 顧客マスタ
+│   └── orders.csv                     # 注文履歴
 └── docs/
-    ├── handson_guide.md                  # 詳細ガイド
-    └── demo_script.md                    # デモスクリプト
+    └── handson_guide.md               # 詳細ガイド
 ```
 
 ## 🔄 MLOpsワークフロー
 
 ```mermaid
 flowchart LR
-    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Model Training] --> E[Experiment Tracking] --> F[Model Registry] --> G[Streamlit App]
+    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Model Training] --> E[Experiment Tracking] --> F[Model Registry]
 ```
 
 | Section | 内容 |
@@ -82,37 +81,35 @@ flowchart LR
 | **1. Data Exploration** | データ探索 + チャーンラベル作成 |
 | **2. Feature Store** | Entity, FeatureView, v1→v2 バージョン管理 |
 | **3. Model Training** | XGBoost, CV, Feature Importance, SHAP |
-| **4. Experiment Tracking** | 複数Run比較, メトリクス・アーティファクト記録, Model Registry連携 |
+| **4. Experiment Tracking** | 複数Run比較, メトリクス記録 |
 | **5. Model Registry** | バージョン管理, 本番デプロイ, SQL推論 |
-| **6. Experiment Viewer** | Streamlitアプリで実験結果を可視化 |
 
 ## ⏱️ 所要時間
 
 | セクション | 内容 | 主なトピック | 時間 |
 |-----------|------|-------------|------|
-| 事前準備 | SQLスクリプト実行 | 環境構築、データロード | 5分 |
+| 事前準備 | SQLスクリプト実行 | 環境構築、データロード | 10分 |
 | Section 1 | データ探索 | EDA、チャーン定義・ラベル作成 | 15分 |
 | Section 2 | Feature Store | Entity, FeatureView, v1→v2 | 20分 |
 | Section 3 | モデル学習 | XGBoost, CV, ハイパラチューニング, SHAP | 20分 |
-| Section 4 | Experiment Tracking | 複数モデル比較、パラメータ管理、Model Registry連携 | 20分 |
+| Section 4 | Experiment Tracking | 複数モデル比較、パラメータ管理 | 15分 |
 | Section 5 | Model Registry | 登録、v1→v2、SQL推論 | 10分 |
-| Section 6 | Experiment Viewer | Streamlitアプリ作成・実験可視化 | 10分 |
-| **合計** | | | **約100分** |
+| **合計** | | | **約90分** |
 
 ## 🚀 クイックスタート
 
 ### 1. 環境構築（Snowsightで実行）
 
 ```sql
--- setup/setup.sql をワークシートにコピー＆ペーストして「Run All」
-```
+-- Step 1: 環境セットアップ
+-- setup/00_setup_environment.sql を実行
 
-これだけで以下が自動で作成されます：
-- Git API統合 & Gitリポジトリ
-- データベース & スキーマ
-- ウェアハウス（Python用 M / SQL用 XS）
-- 顧客・注文データ
-- 6つのNotebook
+-- Step 2: データロード
+-- setup/01_prepare_training_data.sql を実行
+
+-- Step 3: Git連携 & Notebook自動作成
+-- setup/02_setup_git_and_notebooks.sql を実行
+```
 
 ### 2. ハンズオン実行
 
@@ -121,17 +118,13 @@ Snowflake Notebookを順番に実行:
 1. `01_DATA_EXPLORATION` - データ理解 + チャーンラベル作成
 2. `02_FEATURE_STORE` - 特徴量の設計・登録
 3. `03_MODEL_TRAINING` - モデル学習
-4. `04_EXPERIMENT_TRACKING` - 実験管理 + Model Registry連携
+4. `04_EXPERIMENT_TRACKING` - 実験管理
 5. `05_MODEL_REGISTRY` - モデル登録・本番活用
-6. `06_EXPERIMENT_VIEWER_APP` - Streamlitアプリ作成
 
 ## 📋 前提条件
 
 - Snowflakeアカウント（トライアルアカウント可）
 - ACCOUNTADMIN または必要な権限
-
-> 💡 **注意**: Section 6のStreamlit画像表示機能はExternal Access Integrationが必要です。
-> トライアルアカウントではこの機能は利用できませんが、棒グラフ版は動作します。
 
 ## 🔑 学習できるMLOpsスキル
 
@@ -140,9 +133,8 @@ Snowflake Notebookを順番に実行:
 | **Data Exploration** | チャーン定義の決定、ラベル作成 |
 | **Feature Store** | Entity, FeatureView, バージョン管理(v1→v2) |
 | **Model Training** | XGBoost, クロスバリデーション, SHAP値 |
-| **Experiment Tracking** | 実験の記録・比較・最適モデルの選択・アーティファクト保存 |
+| **Experiment Tracking** | 実験の記録・比較・最適モデルの選択 |
 | **Model Registry** | モデルの登録・バージョン管理(v1→v2)・SQL推論 |
-| **Streamlit in Snowflake** | 実験結果の可視化アプリ作成 |
 
 ## 📈 期待される成果
 
@@ -150,10 +142,9 @@ Snowflake Notebookを順番に実行:
 
 - ✅ 定義・作成したチャーンラベル
 - ✅ Feature Store に登録された特徴量（v1, v2）
-- ✅ 複数の実験記録（メトリクス、アーティファクト、SHAP画像）
+- ✅ 複数の実験記録
 - ✅ Model Registryに登録されたモデル（v1, v2）
 - ✅ チャーンリスク顧客リスト（リテンション施策対象）
-- ✅ 実験結果を閲覧できるStreamlitアプリ
 
 ## 🔗 参考リンク
 
@@ -161,4 +152,3 @@ Snowflake Notebookを順番に実行:
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowflake ML Experiments](https://docs.snowflake.com/en/developer-guide/snowflake-ml/experiments)
-- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)

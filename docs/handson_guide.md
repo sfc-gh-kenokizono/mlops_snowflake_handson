@@ -14,7 +14,7 @@
 
 ```mermaid
 flowchart LR
-    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Training] --> E[Experiments] --> F[Registry] --> G[Viewer] --> H[Production]
+    A[(Data)] --> B[Label Creation] --> C[Feature Store] --> D[Training] --> E[Experiments] --> F[Registry] --> G[Production]
 ```
 
 | Section | 内容 |
@@ -22,9 +22,8 @@ flowchart LR
 | **1. Data Exploration** | データ探索 + チャーンラベル作成 |
 | **2. Feature Store** | Entity, FeatureView, v1→v2 |
 | **3. Training** | XGBoost, CV, SHAP |
-| **4. Experiments** | 複数Run比較、Model Registry連携 |
+| **4. Experiments** | 複数Run比較 |
 | **5. Registry** | モデル登録・デプロイ |
-| **6. Experiment Viewer** | Streamlitアプリで実験結果を可視化 |
 | **Production** | SQL推論 |
 
 ---
@@ -143,10 +142,11 @@ flowchart TB
 --   - Git API統合 & Gitリポジトリ
 --   - DATABASE: MLOPS_HOL_DB
 --   - SCHEMA: PREP_DATA, FEATURE_STORE, MODEL_REGISTRY, EXPERIMENTS, ANALYTICS
---   - WAREHOUSE: MLOPS_HOL_PYTHON_WH (MEDIUM), MLOPS_HOL_SQL_WH (XSMALL)
+--   - COMPUTE_POOL: MLOPS_HOL_COMPUTE_POOL (CPU_X64_M - コンテナランタイム)
+--   - WAREHOUSE: MLOPS_HOL_SQL_WH (XSMALL)
 --   - ROLE: MLOPS_HOL_ROLE
 --   - テーブル: CUSTOMERS, ORDERS
---   - 6つのNotebook
+--   - 6つのNotebook（コンテナランタイムで実行）
 ```
 
 ---
@@ -303,8 +303,7 @@ best_model.fit(train_df)
 
 - 複数のモデル・パラメータで実験を実行する
 - パラメータとメトリクスを記録・比較する
-- **過学習を検出する（Train/Testスコア比較）**
-- 最適なモデルを選択し、Model Registryに登録する
+- 最適なモデルを選択する
 
 ### 主要なコード
 
@@ -317,38 +316,18 @@ exp.set_experiment("CHURN_PREDICTION_EXPERIMENT")
 
 # Runの実行
 with exp.start_run("run_baseline"):
-    exp.log_param("max_depth", 3)
-    model.fit(X_train, y_train)
-    
-    # テストメトリクス
-    exp.log_metric("f1_score", test_f1)
-    
-    # 訓練メトリクス（過学習チェック）
-    exp.log_metric("train_f1_score", train_f1)
-    exp.log_metric("overfit_gap_f1", train_f1 - test_f1)
-    
-    # 画像アーティファクト
-    exp.log_artifact("/tmp/shap_summary.png")
-
-# 最良モデルをModel Registryに登録
-exp.log_model(model, "CUSTOMER_CHURN_PREDICTOR", version_name="v1_{timestamp}")
+    exp.log_params({"max_depth": 3, "learning_rate": 0.1})
+    model.fit(train_df)
+    exp.log_metrics({"accuracy": 0.85, "recall": 0.70})
 ```
 
 ### 実験設計
 
 | Run | 特徴 | 目的 |
 |-----|------|------|
-| Baseline | デフォルトパラメータ | 基準値の確立 |
-| DeepTree | max_depth増加 | 複雑なパターンの学習 |
-| Conservative | 浅い木 + 低学習率 | 過学習防止 |
-
-### 過学習チェック
-
-| 指標 | 説明 |
-|------|------|
-| Train F1 | 訓練データでのF1スコア |
-| Test F1 | テストデータでのF1スコア |
-| Gap | Train F1 - Test F1（大きいほど過学習）|
+| run_baseline | デフォルトパラメータ | 基準値の確立 |
+| run_deeper | max_depth増加 | 複雑なパターンの学習 |
+| run_balanced | scale_pos_weight増加 | Recall向上 |
 
 ---
 
@@ -356,7 +335,7 @@ exp.log_model(model, "CUSTOMER_CHURN_PREDICTOR", version_name="v1_{timestamp}")
 
 ### 目的
 
-- **Section 4で登録したv1モデルを確認する**
+- 最良モデルをModel Registryに登録する
 - バージョン管理（v1 → v2）を体験する
 - 登録したモデルで推論を実行する
 
@@ -372,58 +351,24 @@ registry = Registry(
     schema_name="MODEL_REGISTRY"
 )
 
-# v1はSection 4でexp.log_model()で登録済み
-# バージョン名は v1_{timestamp} 形式
+# モデルの登録（v1）
+model_ref = registry.log_model(
+    model=best_model,
+    model_name="CUSTOMER_CHURN_PREDICTOR",
+    version_name="v1",
+    metrics=metrics,
+    comment="チャーン予測モデル v1"
+)
 
-# v1のメトリクスを確認
-model = registry.get_model("CUSTOMER_CHURN_PREDICTOR")
-v1_version = model.version("v1_20241219_123456")  # 動的に取得
-v1_metrics = v1_version.get_metric("*")
-
-# v2の追加登録（タイムスタンプ付きバージョン名）
-v2_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+# v2の登録
 model_ref_v2 = registry.log_model(
     model=improved_model,
     model_name="CUSTOMER_CHURN_PREDICTOR",
-    version_name=f"v2_{v2_timestamp}",
+    version_name="v2",
     metrics=v2_metrics,
     comment="チャーン予測モデル v2 - パラメータ改善"
 )
 ```
-
----
-
-## 📝 Section 6: Experiment Viewer
-
-### 目的
-
-- **Streamlit in Snowflake** で実験結果を閲覧できるアプリを作成
-- 過去の実験を簡単に振り返れるようにする
-
-### 主要なコード
-
-```python
-import streamlit as st
-from snowflake.snowpark.context import get_active_session
-
-# セッション取得
-session = get_active_session()
-
-# 実験結果を取得
-df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
-
-# メトリクス比較テーブル（過学習チェック付き）
-comparison_df = df[["RUN_NAME", "F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1", "ROC_AUC"]].copy()
-st.dataframe(comparison_df)
-```
-
-### 学習ポイント
-
-| 機能 | 説明 |
-|------|------|
-| Streamlit in Snowflake | データを外部に出さずにアプリ作成 |
-| 過学習チェック | Train F1 vs Test F1 のGap表示 |
-| Feature Importance可視化 | Altairで棒グラフ化 |
 
 ---
 
@@ -434,10 +379,9 @@ st.dataframe(comparison_df)
 1. **データ探索 + ラベル作成**: チャーンを定義し、ラベルを作成
 2. **特徴量管理**: Feature Storeで特徴量をバージョン管理
 3. **モデル学習**: ハイパーパラメータチューニング、CV、SHAP
-4. **実験管理**: 複数実験を記録・比較、Model Registry連携
+4. **実験管理**: 複数実験を記録・比較
 5. **モデル管理**: Model Registryでバージョン管理
-6. **実験可視化**: Streamlitアプリで実験結果を確認
-7. **本番活用**: チャーンリスク顧客リストを生成
+6. **本番活用**: チャーンリスク顧客リストを生成
 
 ### ビジネス価値
 
