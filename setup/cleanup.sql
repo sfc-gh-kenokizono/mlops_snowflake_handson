@@ -24,32 +24,37 @@ DROP NOTEBOOK IF EXISTS MLOPS_HOL_DB.NOTEBOOKS."05_MODEL_REGISTRY";
 DROP NOTEBOOK IF EXISTS MLOPS_HOL_DB.NOTEBOOKS."06_EXPERIMENT_VIEWER_APP";
 
 -- ============================================
--- 3. Git Repositoryの削除（_KE: チーム共有アカウント用サフィックス）
+-- 3. Streamlit Appの削除
+-- ============================================
+DROP STREAMLIT IF EXISTS MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_VIEWER;
+
+-- ============================================
+-- 4. Git Repositoryの削除（_KE: チーム共有アカウント用サフィックス）
 -- ============================================
 DROP GIT REPOSITORY IF EXISTS MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE;
 
 -- ============================================
--- 4. API Integrationの削除（_KE: チーム共有アカウント用サフィックス）
+-- 5. API Integrationの削除（_KE: チーム共有アカウント用サフィックス）
 -- ============================================
 DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION_KE;
 
 -- ============================================
--- 5. データベースの削除（すべてのスキーマ・テーブルも削除）
+-- 6. データベースの削除（すべてのスキーマ・テーブルも削除）
 -- ============================================
 DROP DATABASE IF EXISTS MLOPS_HOL_DB;
 
 -- ============================================
--- 6. コンピュートプールの削除
+-- 7. コンピュートプールの削除
 -- ============================================
 DROP COMPUTE POOL IF EXISTS MLOPS_HOL_COMPUTE_POOL;
 
 -- ============================================
--- 7. ウェアハウスの削除
+-- 8. ウェアハウスの削除
 -- ============================================
 DROP WAREHOUSE IF EXISTS MLOPS_HOL_SQL_WH;
 
 -- ============================================
--- 8. ロールの削除
+-- 9. ロールの削除
 -- ============================================
 DROP ROLE IF EXISTS MLOPS_HOL_ROLE;
 

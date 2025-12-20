@@ -380,25 +380,39 @@ model_ref_v2 = registry.log_model(
 - 複数Runの比較を容易にする
 - 過学習検出（Train vs Test F1）を視覚的に確認する
 
-### 主要なコード
+### 実行方法（SQLで自動作成）
+
+```sql
+-- Snowsightで setup/setup_after_04.sql を実行
+-- または以下を直接実行：
+
+USE ROLE ACCOUNTADMIN;
+ALTER GIT REPOSITORY MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE FETCH;
+
+CREATE OR REPLACE STREAMLIT MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_VIEWER
+  FROM '@MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE/branches/main/streamlit/'
+  MAIN_FILE = 'experiment_viewer.py'
+  QUERY_WAREHOUSE = MLOPS_HOL_SQL_WH;
+```
+
+### 主要なコード（streamlit/experiment_viewer.py）
 
 ```python
 import streamlit as st
+from snowflake.snowpark.context import get_active_session
 import altair as alt
 
+session = get_active_session()
+
 # 実験結果の取得
-results_df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
+df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
 
 # 比較テーブルの表示
-st.dataframe(results_df[[
-    "RUN_NAME", "TEST_F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1"
-]])
+st.dataframe(df[["RUN_NAME", "F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1"]])
 
-# Feature Importanceの比較チャート
-chart = alt.Chart(importance_df).mark_bar().encode(
-    x=alt.X('IMPORTANCE:Q'),
-    y=alt.Y('FEATURE:N', sort='-x'),
-    color='RUN_NAME:N'
+# Altairで棒グラフ
+chart = alt.Chart(metrics_df).mark_bar().encode(
+    x="Run:N", y="Value:Q", color="Run:N"
 )
 st.altair_chart(chart)
 ```
@@ -407,7 +421,7 @@ st.altair_chart(chart)
 
 | ポイント | 説明 |
 |---------|------|
-| Streamlit in Snowflake | Notebook内でStreamlitアプリを実行可能 |
+| Git統合でStreamlit作成 | コード手動コピペ不要、バージョン管理も自動 |
 | 比較ビュー | 全Runのメトリクスを一覧で比較 |
 | 過学習検出 | Train F1とTest F1のギャップで過学習を検出 |
 

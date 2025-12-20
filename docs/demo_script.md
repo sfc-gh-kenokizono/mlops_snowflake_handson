@@ -259,34 +259,35 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 ## Step 6: Experiment Viewer（10分）
 
 ### 実行
-1. **06_EXPERIMENT_VIEWER_APP** Notebookを開く
-2. Streamlitアプリのコードを確認
-3. 「Streamlit」タブに切り替えて実行
+1. Snowsightで新しいワークシートを作成
+2. `setup/setup_after_04.sql` をコピー＆ペースト
+3. 「Run All」で実行
+4. **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
 
 ### 📢 説明ポイント
 
-#### 6.1 Streamlitアプリの構成
+#### 6.1 SQLで自動作成
 ```
-「実験結果を可視化するStreamlitアプリを作成しました。
-Snowflake Notebook内でStreamlitを実行できます。
+「setup_after_04.sqlを実行するだけで、
+Streamlitアプリが自動作成されます。
 
-このアプリでは:
-- 各実験Runのメトリクス比較
-- Feature Importanceの比較
-- 過学習検出（Train vs Test F1スコア）
-をインタラクティブに確認できます。」
+Git統合を使っているので:
+- コードを手動で貼り付ける必要なし
+- バージョン管理も自動
+- チーム全員が同じアプリを使える」
 ```
 
 #### 6.2 比較ビュー
 ```
 「比較ビューでは、全Runを一覧で比較できます。
 - Test F1、Train F1、過学習Gap
-- どのモデルが最も汎化性能が高いか一目でわかります」
+- どのモデルが最も汎化性能が高いか一目でわかります
+- 過学習しているモデルはGapの値で検出できます」
 ```
 
 ### 📊 UI確認ポイント
-- Streamlitアプリが正常に表示されることを確認
-- 各タブ（比較ビュー、詳細ビュー）を切り替えてデモ
+- **Projects → Streamlit** でEXPERIMENT_VIEWERが作成されていることを確認
+- アプリを開き、比較ビュー・詳細ビューを切り替えてデモ
 
 ```
 📢「Streamlit in Snowflakeを使うと、
