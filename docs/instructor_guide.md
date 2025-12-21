@@ -1,6 +1,6 @@
 # Snowflake MLOps ハンズオン - 講師用ガイド
 
-> 📝 このドキュメントは講師専用です。各セルの役割と説明ポイントを記載しています。
+> 📝 このドキュメントは講師専用です。各セルの役割、説明ポイント、UI操作のタイミングを記載しています。
 
 ---
 
@@ -10,9 +10,44 @@
 |---------|------|
 | 📝 | 講師メモ（言わないけど理解しておくこと） |
 | 📢 | 説明ポイント（お客様に説明する内容） |
+| 🖥️ | UI操作（Snowsightで見せる画面） |
 | ⏱️ | 所要時間の目安 |
 | ⚠️ | 注意点・エラーが起きやすい箇所 |
 | 💡 | 質問が来そうなポイント |
+
+---
+
+## 📋 概要
+
+**総所要時間**: 約100分  
+**対象者**: データサイエンティスト、MLエンジニア、データエンジニア
+
+### デモストーリー
+📢 「皆さんは小売会社『Snow Retail』のデータサイエンティストです。2024年前半にアクティブだった顧客の一部が、後半に離反しています。離反しそうな顧客を事前に特定し、リテンション施策を打ちたいと考えています。」
+
+---
+
+# Step 0: 環境セットアップ
+
+**所要時間**: 約5分
+
+## 実行手順
+1. Snowsightを開く
+2. 新しいワークシートを作成
+3. `setup/setup.sql` をコピー＆ペースト
+4. 「Run All」で実行
+
+## 📢 説明ポイント
+「このスクリプト1つで、必要な環境がすべて構築されます。
+- Git連携でリポジトリを登録
+- データベース、コンピュートプール（CPU_X64_M）の作成
+- CSVデータのロード
+- 6つのNotebookの自動作成（コンテナランタイムで実行）
+
+約2分で完了します。」
+
+## ✅ 確認
+「🎉 セットアップ完了！」が表示されることを確認
 
 ---
 
@@ -20,96 +55,115 @@
 
 **所要時間**: 約15分
 
-## Cell 0（マークダウン）: タイトル・目標
+## 実行手順
+**Projects → Notebooks → 01_DATA_EXPLORATION** を開く
+
+---
+
+### Cell 0（Markdown）: タイトル・目標
 📝 セクション概要。このセクションでは「チャーンの定義」と「ラベル作成」がゴール。
 
-## Cell 1（マークダウン）: 1.1 環境設定
+### Cell 1（Markdown）: 1.1 環境設定
 📝 セクション見出し。
 
-## Cell 2: ライブラリインポート
+### Cell 2: ライブラリインポート
 📝 Snowpark関連のインポート。特に説明不要。
 
-## Cell 3: データベース・スキーマ設定
+### Cell 3: データベース・スキーマ設定
 📝 `MLOPS_HOL_DB.PREP_DATA` を使用。setup.sqlで作成済み。
 
-## Cell 4（マークダウン）: 1.2 データの確認
+### Cell 4（Markdown）: 1.2 データの確認
 📝 セクション見出し。
 
-## Cell 5: 顧客データの確認
+### Cell 5: 顧客データの確認
 📢 「顧客データは3,000件。セグメント、地域、登録日などの属性があります。」
 
-## Cell 6: 注文データの確認
+### Cell 6: 注文データの確認
 📢 「注文データは約20,000件。顧客ID、注文日、金額、ステータスがあります。」
 
-## Cell 7: 顧客セグメント別分布
+### Cell 7: 顧客セグメント別分布
 📝 セグメントはPremium/Standard/Basicの3種類。
 
-## Cell 8: 地域別分布
+### Cell 8: 地域別分布
 📝 地域はNorth/South/East/Westの4種類。
 
-## Cell 9（マークダウン）: 1.3 注文データの詳細分析
+### Cell 9（Markdown）: 1.3 注文データの詳細分析
 📝 セクション見出し。
 
-## Cell 10: 注文日付の範囲確認
+### Cell 10: 注文日付の範囲確認
 📢 「注文データは2023年〜2024年をカバーしています。」
 💡 「なぜ2024年で区切るのか？」→ 2024年前半をobservation period、後半をprediction periodとして使う設計。
 
-## Cell 11: 注文ステータス別件数
+### Cell 11: 注文ステータス別件数
 📝 COMPLETED/RETURNED/CANCELLEDの3種類。返品率の特徴量に使う。
 
-## Cell 12: 月別注文件数（2024年）
+### Cell 12: 月別注文件数（2024年）
 📢 「2024年の月別推移を見ています。後半（7月以降）に注文がない顧客がチャーンになります。」
 
-## Cell 13: 注文金額の統計
+### Cell 13: 注文金額の統計
 📝 金額の分布確認。特に説明不要。
 
-## Cell 14（マークダウン）: 1.4 チャーンの定義
+### Cell 14（Markdown）: 1.4 チャーンの定義
 📢 **重要！** 「ここがMLの重要なポイントです。『チャーン』をどう定義するかはビジネス要件で決まります。今回は『2024年前半に注文があったが、後半に注文がなかった顧客』をチャーンと定義します。」
 
-## Cell 15: 2024年前半に注文がある顧客
+### Cell 15: 2024年前半に注文がある顧客
 📝 H1（1-6月）に注文がある顧客を抽出。
 
-## Cell 16: 2024年後半に注文がある顧客
+### Cell 16: 2024年後半に注文がある顧客
 📝 H2（7-12月）に注文がある顧客を抽出。
 
-## Cell 17: チャーン顧客の定義
+### Cell 17: チャーン顧客の定義
 📢 「前半に注文があり、後半に注文がない顧客 = チャーン（IS_CHURNED=1）」
 📝 `left_anti` joinで「H1にあってH2にない」顧客を抽出。
 
-## Cell 18: アクティブ顧客の定義
+### Cell 18: アクティブ顧客の定義
 📝 前半・後半両方に注文がある顧客 = アクティブ（IS_CHURNED=0）
 
-## Cell 19: チャーンラベルを結合
+### Cell 19: チャーンラベルを結合
 📝 チャーンとアクティブを`union`して全ラベルを作成。
 
-## Cell 20（マークダウン）: 1.5 チャーンラベルの保存
+### Cell 20（Markdown）: 1.5 チャーンラベルの保存
 📝 セクション見出し。
 
-## Cell 21: ラベルをテーブルに保存
+### Cell 21: ラベルをテーブルに保存
 📢 「作成したラベルをテーブルに保存します。これが後の学習データの正解ラベルになります。」
 📝 `PREP_DATA.CHURN_LABELS` に保存。
 
-## Cell 22: 保存したテーブルを確認
+### Cell 22: 保存したテーブルを確認
 📝 保存確認。チャーン率が約25-30%程度になるはず。
 
-## Cell 23（マークダウン）: 1.6 簡易EDA
+### Cell 23（Markdown）: 1.6 簡易EDA
 📝 セクション見出し。
 
-## Cell 24: 顧客情報とチャーンラベルを結合
+### Cell 24: 顧客情報とチャーンラベルを結合
 📝 分析用のDataFrame作成。
 
-## Cell 25: セグメント別チャーン率
+### Cell 25: セグメント別チャーン率
 📢 「セグメント別にチャーン率を見ると、Basicセグメントが高い傾向があります。」
 💡 「なぜBasicが高い？」→ 価格感度が高い顧客層、競合に流れやすい等。
 
-## Cell 26: 地域別チャーン率
+### Cell 26: 地域別チャーン率
 📝 地域差はあまりないことが多い。
 
-## Cell 27: 2024年前半の注文金額とチャーンの関係
+### Cell 27: 2024年前半の注文金額とチャーンの関係
 📢 「注文金額が低い顧客ほどチャーンしやすい傾向が見えます。これがMonetary特徴量の根拠になります。」
 
-## Cell 28-29（マークダウン）: セクション完了
+### Cell 28-29（Markdown）: セクション完了
 📝 まとめと次のステップへの誘導。
+
+---
+
+### 🖥️ UI確認（Section 1 終了後）
+
+**Data → Databases → MLOPS_HOL_DB → PREP_DATA → Tables** を開く
+
+📢 「作成したテーブルを確認しましょう。CUSTOMERS, ORDERS, CHURN_LABELS が作成されています。」
+
+| 確認項目 | 期待値 |
+|---------|-------|
+| CUSTOMERS | 3,000件 |
+| ORDERS | 約20,000件 |
+| CHURN_LABELS | 約2,000件 |
 
 ---
 
@@ -117,94 +171,117 @@
 
 **所要時間**: 約20分
 
-## Cell 0（マークダウン）: タイトル・目標
+## 実行手順
+**02_FEATURE_STORE** Notebookを開く
+
+---
+
+### Cell 0（Markdown）: タイトル・目標
 📝 Feature Storeの概念と、Entity/FeatureViewの登録がゴール。
 
-## Cell 1（マークダウン）: 2.1 環境設定
+### Cell 1（Markdown）: 2.1 環境設定
 📝 セクション見出し。
 
-## Cell 2: ライブラリインポート
+### Cell 2: ライブラリインポート
 📝 `FeatureStore`, `FeatureView`, `Entity` をインポート。
 ⚠️ Feature Store関連のクラスはsnowflake.ml.feature_storeから。
 
-## Cell 3（マークダウン）: 2.2 データの確認
+### Cell 3（Markdown）: 2.2 データの確認
 📝 セクション見出し。
 
-## Cell 4: 顧客データ確認
+### Cell 4: 顧客データ確認
 📝 Section 1で確認済みのデータを再確認。
 
-## Cell 5: 注文データ確認
+### Cell 5: 注文データ確認
 📝 同上。
 
-## Cell 6: チャーンラベル確認
+### Cell 6: チャーンラベル確認
 📝 Section 1で作成したラベルを確認。チャーン率が表示される。
 
-## Cell 7（マークダウン）: 2.3 特徴量の計算
+### Cell 7（Markdown）: 2.3 特徴量の計算
 📢 「RFM特徴量を計算します。Recency（最終注文からの日数）、Frequency（注文回数）、Monetary（注文金額）は顧客分析の古典的なフレームワークです。」
 
-## Cell 8: 基本RFM特徴量の計算
+### Cell 8: 基本RFM特徴量の計算
 📢 **重要！** 「特徴量は2024年6月30日時点のデータで計算します。7月以降のデータは『未来』なので使いません。これがデータリークを防ぐ重要なポイントです。」
 📝 `OBSERVATION_DATE = date(2024, 6, 30)` でフィルタ。
 💡 「TOTAL_ORDER_COUNTは全期間？」→ 正確には「観測日までの累計」。リークしていない。
 
-## Cell 9: 2024年前半の集計
+### Cell 9: 2024年前半の集計
 📝 H1期間の注文回数・金額。基本RFMとは別に「直近の活発さ」を見る特徴量。
 💡 「TOTALと相関しない？」→ する。これがマルチコの原因。学習ポイントとして活用。
 
-## Cell 10: 返品率の計算
+### Cell 10: 返品率の計算
 📝 STATUS='RETURNED'の割合。返品が多い顧客はチャーンしやすい仮説。
 
-## Cell 11: 特徴量の結合
+### Cell 11: 特徴量の結合
 📝 全特徴量を1つのDataFrameに結合。
 
-## Cell 12（マークダウン）: 2.4 Feature Storeの作成
+### Cell 12（Markdown）: 2.4 Feature Storeの作成
 📝 セクション見出し。
 
-## Cell 13: Feature Store作成
+### Cell 13: Feature Store作成
 📢 「Feature Storeを作成します。database、name（スキーマ名）、ウェアハウスを指定します。」
 📝 `CreationMode.CREATE_IF_NOT_EXIST` で冪等性を確保。
 
-## Cell 14: 既存オブジェクトのクリーンアップ
+### Cell 14: 既存オブジェクトのクリーンアップ
 📝 再実行用のクリーンアップ。初回は何も削除されない。
 ⚠️ 再実行時にエラーを防ぐための処理。
 
-## Cell 15（マークダウン）: 2.5 Entityの定義
+### Cell 15（Markdown）: 2.5 Entityの定義
 📝 セクション見出し。
 
-## Cell 16: Customer Entity定義
+### Cell 16: Customer Entity定義
 📢 「Entityは特徴量が紐づく主キーです。今回は顧客IDがEntityになります。」
 📝 `join_keys=["CUSTOMER_ID"]` がポイント。
 
-## Cell 17（マークダウン）: 2.6 FeatureViewの登録（v1）
+### Cell 17（Markdown）: 2.6 FeatureViewの登録（v1）
 📝 セクション見出し。
 
-## Cell 18: FeatureView v1登録
+### Cell 18: FeatureView v1登録
 📢 「5つの基本RFM特徴量をv1として登録します。」
 📝 v1は基本特徴量のみ。後でv2で拡張する。
 
-## Cell 19（マークダウン）: 2.7 バージョン管理（v1 → v2）
+### Cell 19（Markdown）: 2.7 バージョン管理（v1 → v2）
 📢 「特徴量を追加してv2を作成します。Feature Storeではバージョン管理ができるので、どの特徴量セットでモデルを学習したか追跡できます。」
 
-## Cell 20: FeatureView v2登録
+### Cell 20: FeatureView v2登録
 📢 「v2では返品率とセグメントを追加しています。」
 📝 v2は7特徴量（v1の5個 + RETURN_RATE + SEGMENT）。
 💡 「SEGMENTはカテゴリ変数では？」→ 今回はシンプルにそのまま使用。実務ではエンコーディングが必要。
 
-## Cell 21: バージョン一覧確認
+### Cell 21: バージョン一覧確認
 📢 「登録されたバージョンを確認できます。Snowsight上でも確認してみましょう。」
-📝 ここでSnowsight（AI & ML → Feature Store）を見せる。
 
-## Cell 22（マークダウン）: 2.8 学習データセットの作成
+---
+
+### 🖥️ UI確認（Cell 21 の後）
+
+**AI & ML → Feature Store** を開く
+
+📢 「Snowsight上でFeature Storeの内容を確認できます。Entityと、そこに紐づくFeatureViewが一覧表示されます。」
+
+| 操作 | 確認項目 |
+|-----|---------|
+| 左メニュー → AI & ML → Feature Store | Feature Store画面が開く |
+| 「CUSTOMER」をクリック | Entityの詳細が表示 |
+| 「CUSTOMER_FEATURES」をクリック | v1, v2 のバージョンが表示 |
+| v1 → v2 を切り替え | 特徴量の違いを確認 |
+
+📢 「バージョンごとの特徴量の違いも確認できます。v1は5個、v2は7個の特徴量があります。」
+
+---
+
+### Cell 22（Markdown）: 2.8 学習データセットの作成
 📝 セクション見出し。
 
-## Cell 23: チャーンラベル取得
+### Cell 23: チャーンラベル取得
 📝 Section 1で作成したラベルを取得。
 
-## Cell 24: 学習データセット保存
+### Cell 24: 学習データセット保存
 📢 「特徴量とラベルを結合して、学習データセットを作成・保存します。」
 📝 `FEATURE_STORE.TRAINING_DATASET_V1` に保存。
 
-## Cell 25（マークダウン）: セクション完了
+### Cell 25（Markdown）: セクション完了
 📝 まとめと次のステップへの誘導。
 
 ---
@@ -213,110 +290,115 @@
 
 **所要時間**: 約20分
 
-## Cell 0（マークダウン）: タイトル・目標
+## 実行手順
+**03_MODEL_TRAINING** Notebookを開く
+
+---
+
+### Cell 0（Markdown）: タイトル・目標
 📝 XGBoostでのモデル学習、CV、SHAP解析がゴール。
 
-## Cell 1（マークダウン）: 3.1 環境設定
+### Cell 1（Markdown）: 3.1 環境設定
 📝 セクション見出し。
 
-## Cell 2: ライブラリインポート
+### Cell 2: ライブラリインポート
 📝 XGBoost、SHAP、matplotlibをインポート。
 📝 `warnings.filterwarnings('ignore')` でハンズオン向けに警告を抑制。
 
-## Cell 3（マークダウン）: 3.2 学習データの準備
+### Cell 3（Markdown）: 3.2 学習データの準備
 📝 セクション見出し。
 
-## Cell 4: 学習データ読み込み
+### Cell 4: 学習データ読み込み
 📝 Section 2で作成した`TRAINING_DATASET_V1`を読み込み。
 
-## Cell 5: 特徴量カラムの定義
+### Cell 5: 特徴量カラムの定義
 📢 「7つの特徴量を使用します。RFM特徴量と返品率です。」
 📝 `FEATURE_COLS` と `LABEL_COL` を定義。
 
-## Cell 6: カラム選択
+### Cell 6: カラム選択
 📝 必要なカラムのみ選択。
 
-## Cell 7: ラベル分布確認
+### Cell 7: ラベル分布確認
 📢 「チャーン率は約25-30%です。多少の不均衡がありますが、極端ではありません。」
 💡 「不均衡データの場合は？」→ scale_pos_weightで対応。今回も使用している。
 
-## Cell 8（マークダウン）: 3.3 訓練・テストデータの分割
+### Cell 8（Markdown）: 3.3 訓練・テストデータの分割
 📝 セクション見出し。
 
-## Cell 9: データ分割
+### Cell 9: データ分割
 📢 「80%を訓練データ、20%をテストデータとして分割します。seed=42で再現性を確保。」
 
-## Cell 10: 分割後のラベル分布確認
+### Cell 10: 分割後のラベル分布確認
 📝 訓練・テストでチャーン率が大きく変わっていないことを確認。
 
-## Cell 11（マークダウン）: 3.4 ハイパーパラメータチューニング
+### Cell 11（Markdown）: 3.4 ハイパーパラメータチューニング
 📢 「RandomizedSearchCVで最適なパラメータを探索します。」
 
-## Cell 12: パラメータ空間定義
+### Cell 12: パラメータ空間定義
 📝 探索するハイパーパラメータの範囲を定義。
 
-## Cell 13: RandomizedSearchCV実行
+### Cell 13: RandomizedSearchCV実行
 ⏱️ **約1-2分かかる**
 📢 「5パターン × 3-Fold CV = 15回の学習を実行します。少し時間がかかります。」
 📝 実行中にハイパーパラメータチューニングの意義を説明するとよい。
 
-## Cell 14: 最良パラメータ確認
+### Cell 14: 最良パラメータ確認
 📢 「最良のパラメータが見つかりました。このパラメータで本番モデルを作成します。」
 
-## Cell 15（マークダウン）: 3.5 クロスバリデーション
+### Cell 15（Markdown）: 3.5 クロスバリデーション
 📝 セクション見出し。
 
-## Cell 16: 5-Fold CV実行
+### Cell 16: 5-Fold CV実行
 📢 「最良パラメータで5-Fold CVを実行し、汎化性能を確認します。標準偏差が小さければモデルは安定しています。」
 
-## Cell 17: チューニング前後比較
+### Cell 17: チューニング前後比較
 📢 「チューニングにより性能が改善したことを確認できます。」
 
-## Cell 18（マークダウン）: 3.6 Feature Importance
+### Cell 18（Markdown）: 3.6 Feature Importance
 📝 セクション見出し。
 
-## Cell 19: Feature Importance可視化
+### Cell 19: Feature Importance可視化
 📢 「どの特徴量が予測に重要かを可視化します。」
-💡 「ORDER_COUNT_2024_H1がゼロに近いのはなぜ？」→ TOTAL_ORDER_COUNTと相関が高いため、モデルはTOTALを選んだ（マルチコの影響）。
+💡 「ORDER_COUNT_2024_H1がゼロに近いのはなぜ？」→ TOTAL_ORDER_COUNTと相関が高いため、モデルはTOTALを選んだ（マルチコの影響）。実務では事前に相関分析を行い、冗長な特徴量を整理します。
 
-## Cell 20（マークダウン）: 3.7 SHAP値
+### Cell 20（Markdown）: 3.7 SHAP値
 📢 「SHAPはモデルの予測を解釈する手法です。『なぜこの顧客がチャーンと予測されたのか？』を説明できます。」
 
-## Cell 21: SHAP値計算
+### Cell 21: SHAP値計算
 ⏱️ **約30秒かかる**
 📝 サンプル500件でSHAP値を計算。
 
-## Cell 22: SHAP Summary Plot
+### Cell 22: SHAP Summary Plot
 📢 「赤がチャーン方向、青がアクティブ方向への寄与を示します。DAYS_SINCE_LAST_ORDERが高い（赤）とチャーンしやすいことがわかります。」
 
-## Cell 23: Waterfall Plot
+### Cell 23: Waterfall Plot
 📢 「個別顧客の予測理由を説明できます。監査や顧客への説明に使えます。」
 
-## Cell 24（マークダウン）: 3.8 テストデータでの予測
+### Cell 24（Markdown）: 3.8 テストデータでの予測
 📝 セクション見出し。
 
-## Cell 25: テストデータ予測
+### Cell 25: テストデータ予測
 📝 テストデータで予測を実行。
 
-## Cell 26（マークダウン）: 3.9 モデルの評価
+### Cell 26（Markdown）: 3.9 モデルの評価
 📝 セクション見出し。
 
-## Cell 27: 評価メトリクス計算
+### Cell 27: 評価メトリクス計算
 📢 「F1スコアが重要です。PrecisionとRecallのバランスを取っています。」
 
-## Cell 28: 混同行列
+### Cell 28: 混同行列
 📢 「混同行列で誤分類のパターンを確認できます。FN（見逃し）とFP（誤報）のバランスを見ます。」
 
-## Cell 29（マークダウン）: 3.10 予測結果の保存
+### Cell 29（Markdown）: 3.10 予測結果の保存
 📝 セクション見出し。
 
-## Cell 30: 予測結果保存
+### Cell 30: 予測結果保存
 📝 `ANALYTICS.MODEL_PREDICTIONS_V1` に保存。
 
-## Cell 31: モデル変数保存
+### Cell 31: モデル変数保存
 📝 次のセクションで使用するための変数保存。
 
-## Cell 32（マークダウン）: セクション完了
+### Cell 32（Markdown）: セクション完了
 📝 まとめと次のステップへの誘導。
 
 ---
@@ -325,91 +407,107 @@
 
 **所要時間**: 約15分
 
-## Cell 0（マークダウン）: タイトル・目標
+## 実行手順
+**04_EXPERIMENT_TRACKING** Notebookを開く
+
+---
+
+### Cell 0（Markdown）: タイトル・目標
 📝 複数の実験を実行し、結果を比較・管理することがゴール。
 
-## Cell 1（マークダウン）: 4.1 環境設定
+### Cell 1（Markdown）: 4.1 環境設定
 📝 セクション見出し。
 
-## Cell 2: ライブラリインポート
+### Cell 2: ライブラリインポート
 📝 `ExperimentTracking` をインポート。
 
-## Cell 3（マークダウン）: 4.2 Experiment Trackingの初期化
+### Cell 3（Markdown）: 4.2 Experiment Trackingの初期化
 📝 セクション見出し。
 
-## Cell 4: Experiment初期化
+### Cell 4: Experiment初期化
 📢 「実験名を設定します。この名前でSnowsight上から実験結果を確認できます。」
 📝 `exp.set_experiment()` で実験を作成/設定。
 
-## Cell 5（マークダウン）: 4.3 学習データの準備
+### Cell 5（Markdown）: 4.3 学習データの準備
 📝 セクション見出し。
 
-## Cell 6: データ準備
+### Cell 6: データ準備
 📝 Section 2で作成したデータを再度読み込み。
 
-## Cell 7（マークダウン）: 4.4 実験の実行
+### Cell 7（Markdown）: 4.4 実験の実行
 📢 「3つの異なるパラメータセットで実験を実行します。」
 
-## Cell 8: 実験設定定義
+### Cell 8: 実験設定定義
 📝 Baseline, DeepTree, Conservativeの3パターンを定義。
 📢 「Baselineはデフォルト、DeepTreeは深い木で複雑なパターン学習、Conservativeは浅い木で過学習防止を狙います。」
 
-## Cell 9: 実験実行
+### Cell 9: 実験実行
 ⏱️ **約2-3分かかる**（SHAP計算含む）
 📢 「各実験でパラメータ、メトリクス、SHAP値、画像を自動で記録します。」
 📝 実行中に各Runの意図を説明するとよい。
 💡 「なぜ複数パターン試す？」→ 1つのパラメータが最適とは限らない。比較して選ぶ。
 
-## Cell 10（マークダウン）: 4.5 実験結果の比較
+### Cell 10（Markdown）: 4.5 実験結果の比較
 📝 セクション見出し。
 
-## Cell 11: 結果比較表示
+### Cell 11: 結果比較表示
 📢 「Train F1とTest F1を比較できます。Gapが大きいと過学習の兆候です。」
 💡 「過学習Gapとは？」→ Train F1 - Test F1。大きいほど過学習。
 
-## Cell 12: 最良モデル選択
+### Cell 12: 最良モデル選択
 📢 「F1スコアを基準に最良モデルを選択します。」
 
-## Cell 13（マークダウン）: 4.6 可視化
+### Cell 13（Markdown）: 4.6 可視化
 📝 セクション見出し。
 
-## Cell 14: メトリクス棒グラフ
+### Cell 14: メトリクス棒グラフ
 📝 実験結果の可視化。最良モデルが金色でハイライト。
 
-## Cell 15: SHAP Summary Plot表示
+### Cell 15: SHAP Summary Plot表示
 📝 最良モデルのSHAP値を表示。
 
-## Cell 16（マークダウン）: 4.7 実験結果の永続化
+### Cell 16（Markdown）: 4.7 実験結果の永続化
 📝 セクション見出し。
 
-## Cell 17: テーブル保存
+### Cell 17: テーブル保存
 📝 `EXPERIMENTS.EXPERIMENT_RESULTS` に保存。Streamlitアプリで使用。
 
-## Cell 18（マークダウン）: 4.7.1 Model Registryとの連携
+### Cell 18（Markdown）: 4.7.1 Model Registryとの連携
 📢 「最良モデルをModel Registryに登録します。」
 
-## Cell 19: Model Registry登録
+### Cell 19: Model Registry登録
 📢 「MODEL_REGISTRYスキーマにモデルを登録します。実験ランとモデルバージョンがリンクされます。」
-⚠️ 以前のエラー箇所。`model_registry.log_model()` を使用（`exp.log_model()` ではない）。
+⚠️ `model_registry.log_model()` を使用（`exp.log_model()` ではない）。
 
-## Cell 20（マークダウン）: 4.8 アーティファクトの取り出し
+### Cell 20（Markdown）: 4.8 アーティファクトの取り出し
 📝 セクション見出し。
 
-## Cell 21: アーティファクト一覧
+### Cell 21: アーティファクト一覧
 📢 「保存したアーティファクト（画像、CSV）を後から取り出せます。」
 
-## Cell 22: SHAP再現
+### Cell 22: SHAP再現
 📢 「SHAP完全データをダウンロードして、Summary Plotを再現できます。監査や振り返りに使えます。」
 
-## Cell 23（マークダウン）: セクション完了
+### Cell 23（Markdown）: セクション完了
 📝 まとめと次のステップへの誘導。
 
-### 📊 UI確認ポイント
-- **AI & ML → Experiments** を開く
-- 「CHURN_PREDICTION_EXPERIMENT」を選択
-- 4つのRun（Baseline, DeepTree, Conservative, BestModel）が表示されることを確認
-- パラメータ・メトリクスの比較表を見せる
-- アーティファクト（画像）を見せる
+---
+
+### 🖥️ UI確認（Section 4 終了後）
+
+**AI & ML → Experiments** を開く
+
+📢 「Snowsight上で実験結果を一覧表示できます。MLflowのような機能がSnowflake内に組み込まれています。」
+
+| 操作 | 確認項目 |
+|-----|---------|
+| 左メニュー → AI & ML → Experiments | Experiments画面が開く |
+| 「CHURN_PREDICTION_EXPERIMENT」をクリック | 実験の詳細画面 |
+| Runs タブ | 4つのRun（Baseline, DeepTree, Conservative, BestModel）が表示 |
+| 複数Runを選択 → Compare | パラメータ・メトリクスの比較表 |
+| 任意のRunをクリック → Artifacts | 保存した画像（SHAP等）を確認 |
+
+📢 「各Runのパラメータとメトリクスを比較し、どのモデルが最良かを判断できます。」
 
 ---
 
@@ -417,115 +515,133 @@
 
 **所要時間**: 約10分
 
-## Cell 0（マークダウン）: タイトル・目標
+## 実行手順
+**05_MODEL_REGISTRY** Notebookを開く
+
+---
+
+### Cell 0（Markdown）: タイトル・目標
 📝 v1の確認、v2の追加、本番推論がゴール。
 
-## Cell 1（マークダウン）: 5.1 環境設定
+### Cell 1（Markdown）: 5.1 環境設定
 📝 セクション見出し。
 
-## Cell 2: ライブラリインポート
+### Cell 2: ライブラリインポート
 📝 `Registry` をインポート。
 
-## Cell 3（マークダウン）: 5.2 学習データの準備
+### Cell 3（Markdown）: 5.2 学習データの準備
 📝 セクション見出し。
 
-## Cell 4: データ準備
+### Cell 4: データ準備
 📝 v2モデル学習用のデータ準備。
 
-## Cell 5: Section 4の実験結果確認
+### Cell 5: Section 4の実験結果確認
 📝 `EXPERIMENTS.EXPERIMENT_RESULTS` を確認。
 
-## Cell 6（マークダウン）: 5.3 Section 4で登録したv1の確認
+### Cell 6（Markdown）: 5.3 Section 4で登録したv1の確認
 📢 「Section 4で登録したv1モデルを確認します。」
 
-## Cell 7: Registry接続
+### Cell 7: Registry接続
 📝 `MODEL_REGISTRY` スキーマに接続。
 
-## Cell 8: v1モデル確認
+### Cell 8: v1モデル確認
 📢 「Section 4で登録したv1が確認できます。」
 ⚠️ v1が見つからない場合はSection 4を再実行。
 
-## Cell 9: v1メトリクス取得
+### Cell 9: v1メトリクス取得
 📝 v2との比較用にv1のメトリクスを取得。
 
-## Cell 10: 登録モデル一覧
+### Cell 10: 登録モデル一覧
 📝 確認用。
 
-## Cell 11: バージョン情報確認
+### Cell 11: バージョン情報確認
 📝 確認用。
 
-## Cell 12（マークダウン）: 5.4 バージョン管理（v1 → v2）
+### Cell 12（Markdown）: 5.4 バージョン管理（v1 → v2）
 📢 「パラメータを改善してv2を作成します。Feature Storeと同様に、モデルもバージョン管理できます。」
 
-## Cell 13: v2モデル学習
+### Cell 13: v2モデル学習
 📢 「max_depthとn_estimatorsを増やしたv2を学習します。」
 
-## Cell 14: v2登録
+### Cell 14: v2登録
 📝 タイムスタンプ付きバージョン名で衝突を回避。
 
-## Cell 15: バージョン一覧確認
+### Cell 15: バージョン一覧確認
 📢 「v1とv2の両方が登録されています。Snowsightでも確認できます。」
 
-## Cell 16: v1 vs v2比較
+---
+
+### 🖥️ UI確認（Cell 15 の後）
+
+**AI & ML → Models** を開く
+
+📢 「Model Registryでは、登録されたモデルの一覧、各バージョンのメトリクス、説明などを確認できます。」
+
+| 操作 | 確認項目 |
+|-----|---------|
+| 左メニュー → AI & ML → Models | Models画面が開く |
+| 「CUSTOMER_CHURN_PREDICTOR」をクリック | モデルの詳細画面 |
+| Versions タブ | v1, v2（タイムスタンプ付き）が表示 |
+| 任意のバージョンをクリック | メトリクス、コメントを確認 |
+
+📢 「本番環境でどのバージョンを使うかの管理もここで行えます。」
+
+---
+
+### Cell 16: v1 vs v2比較
 📢 「v2の方が性能が良いか確認します。」
 
-## Cell 17（マークダウン）: 5.4.1 Lineageテーブルの作成
+### Cell 17（Markdown）: 5.4.1 Lineageテーブルの作成
 📢 「MLOpsの核心は追跡可能性です。どのデータ→どの特徴量→どの実験→どのモデルか追跡できるようにします。」
 
-## Cell 18: Lineageテーブル作成
+### Cell 18: Lineageテーブル作成
 📝 `MODEL_REGISTRY.MODEL_LINEAGE` に保存。
 
-## Cell 19: Lineage確認
+### Cell 19: Lineage確認
 📢 「このテーブルでモデルの系譜を追跡できます。」
 
-## Cell 20（マークダウン）: Lineageの活用例
+### Cell 20（Markdown）: Lineageの活用例
 📝 SQLサンプル。
 
-## Cell 21（マークダウン）: 5.5 v2モデルを使った推論
+### Cell 21（Markdown）: 5.5 v2モデルを使った推論
 📝 セクション見出し。
 
-## Cell 22: v2で推論実行
+### Cell 22: v2で推論実行
 📢 「v2モデルでテストデータを予測します。」
 
-## Cell 23（マークダウン）: 5.6 チャーンリスク顧客リストの作成
+### Cell 23（Markdown）: 5.6 チャーンリスク顧客リストの作成
 📝 セクション見出し。
 
-## Cell 24: チャーンリスク顧客抽出
+### Cell 24: チャーンリスク顧客抽出
 📢 「チャーンリスクが高い（予測=1）顧客を抽出します。」
 
-## Cell 25: 顧客情報結合
+### Cell 25: 顧客情報結合
 📝 セグメント・地域情報を追加。
 
-## Cell 26: リスト保存
+### Cell 26: リスト保存
 📢 「この顧客リストをマーケティング部門に提供し、リテンション施策を実行します。」
 📝 `ANALYTICS.CHURN_RISK_CUSTOMERS` に保存。
 
-## Cell 27（マークダウン）: 5.7 ビジネスアウトカムの確認
+### Cell 27（Markdown）: 5.7 ビジネスアウトカムの確認
 📝 セクション見出し。
 
-## Cell 28: サマリーレポート
+### Cell 28: サマリーレポート
 📢 「ビジネス成果をまとめます。何人の顧客にアプローチすべきかがわかります。」
 
-## Cell 29: セグメント別分布
+### Cell 29: セグメント別分布
 📝 セグメント別のリスク顧客数。
 
-## Cell 30: 地域別分布
+### Cell 30: 地域別分布
 📝 地域別のリスク顧客数。
 
-## Cell 31（マークダウン）: 5.8 SQLからのモデル呼び出し
+### Cell 31（Markdown）: 5.8 SQLからのモデル呼び出し
 📝 セクション見出し。
 
-## Cell 32: SQLサンプル
+### Cell 32: SQLサンプル
 📢 「登録したモデルはSQLから直接呼び出せます。BIツールやダッシュボードからも利用可能です。」
 
-## Cell 33-34（マークダウン）: セクション完了
+### Cell 33-34（Markdown）: セクション完了
 📝 まとめと参考リンク。
-
-### 📊 UI確認ポイント
-- **AI & ML → Models** を開く
-- 「CUSTOMER_CHURN_PREDICTOR」を選択
-- v1, v2（タイムスタンプ付き）が表示されることを確認
-- メトリクス、コメントを確認
 
 ---
 
@@ -533,28 +649,73 @@
 
 **所要時間**: 約10分
 
-## Cell 0（マークダウン）: タイトル・目標
-📝 セクション概要。Streamlitで実験結果を可視化するのがゴール。
+## 実行手順
+**06_EXPERIMENT_VIEWER_APP** Notebookを開く
 
-## Cell 1（マークダウン）: 6.1 アプリ作成の説明
+---
+
+### Cell 0（Markdown）: タイトル・目標
+📝 Streamlitで実験結果を可視化するのがゴール。
+
+### Cell 1（Markdown）: 6.1 アプリ作成の説明
 📝 Git統合でコード管理している旨を説明。
 
-## Cell 2（SQL）: Streamlitアプリ作成
-📢 「このSQLセルを実行するだけで、Streamlitアプリが自動作成されます。」
+### Cell 2（SQL）: Streamlitアプリ作成
+📢 「このSQLセルを実行するだけで、Streamlitアプリが自動作成されます。Git統合を使っているので、コードを手動で貼り付ける必要はありません。」
 📝 Git FETCH → CREATE STREAMLIT → GRANT USAGEの流れ。
 
-## Cell 3-6（マークダウン）: 使い方・まとめ
-📝 アプリの開き方、機能説明、ハンズオン完了メッセージ。
+---
 
-### 実行後の確認
-- **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
+### 🖥️ UI確認（Cell 2 実行後）
 
-### 📊 UI確認ポイント
-- 比較ビュー: 全Runのメトリクス一覧
-- 詳細ビュー: 個別Runのパラメータ、特徴量重要度、SHAP値
-- 過学習Gap: Train F1 - Test F1
+**Projects → Streamlit → EXPERIMENT_VIEWER** を開く
 
 📢 「Streamlit in Snowflakeを使うと、データを移動せずにインタラクティブな可視化が可能です。」
+
+| 操作 | 確認項目 |
+|-----|---------|
+| 左メニュー → Projects → Streamlit | Streamlit一覧画面 |
+| 「EXPERIMENT_VIEWER」をクリック | アプリが起動 |
+| 📊 比較ビュー タブ | 全Runのメトリクス一覧、棒グラフ |
+| 🔍 詳細ビュー タブ | 個別Runのパラメータ、特徴量重要度、SHAP値 |
+
+📢 「比較ビューでは、全Runを一覧で比較できます。Test F1、Train F1、過学習Gap。どのモデルが最も汎化性能が高いか一目でわかります。」
+
+---
+
+### Cell 3-6（Markdown）: 使い方・まとめ
+📝 アプリの開き方、機能説明、ハンズオン完了メッセージ。
+
+---
+
+# 最終成果物の確認
+
+**所要時間**: 約5分
+
+## 🖥️ UI確認
+
+**Data → Databases → MLOPS_HOL_DB** でテーブルを確認
+
+| テーブル | スキーマ | 説明 |
+|----------|----------|------|
+| CHURN_LABELS | PREP_DATA | チャーンラベル |
+| TRAINING_DATASET_V1 | FEATURE_STORE | 学習データ |
+| MODEL_PREDICTIONS_V1 | ANALYTICS | 予測結果 |
+| EXPERIMENT_RESULTS | EXPERIMENTS | 実験結果 |
+| CHURN_RISK_CUSTOMERS | ANALYTICS | 施策対象リスト |
+
+## 📢 まとめ
+
+「本日のハンズオンで、以下を構築しました:
+
+1. **データ探索** → チャーンの定義・ラベル作成
+2. **Feature Store** → 特徴量のバージョン管理
+3. **Model Training** → ハイパラチューニング、SHAP解析
+4. **Experiment Tracking** → 複数モデルの比較
+5. **Model Registry** → モデルのバージョン管理、本番デプロイ
+6. **Experiment Viewer** → Streamlitアプリで実験結果を可視化
+
+すべてSnowflake上で完結しています。データの移動なし、外部ツール不要でMLOpsを実現できます。」
 
 ---
 
@@ -606,10 +767,23 @@ A: Model Registryに登録済みなので、SQLから直接呼び出せます。
 
 ---
 
-# 終わりに
+# クリーンナップ
 
-このガイドを参考に、スムーズなハンズオン進行をお願いします。
-質問があれば、FAQセクションを参照してください。
+ハンズオン終了後:
+```sql
+-- cleanup.sql を実行
+-- すべてのリソースが削除されます
+```
+
+---
+
+# 参考リンク
+
+- [Snowflake ML Overview](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+- [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
+- [Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- [Experiments](https://docs.snowflake.com/en/developer-guide/snowflake-ml/experiments)
+
+---
 
 📢 **ハンズオンの成功を祈っています！**
-
