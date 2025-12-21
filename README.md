@@ -54,7 +54,7 @@ Feature Store、Model Registry までの一連のワークフローを学びま�
 mlops_snowflake_handson/
 ├── setup/
 │   ├── setup.sql                         # 環境セットアップ（オールインワン）
-│   ├── setup_after_04.sql                # Section 4実行後にStreamlitアプリ作成
+│   ├── setup_after_04.sql                # Streamlitアプリ作成（参考用SQL）
 │   └── cleanup.sql                       # クリーンナップ
 ├── notebooks/
 │   ├── 01_data_exploration.ipynb         # データ探索 + チャーンラベル作成
@@ -62,7 +62,7 @@ mlops_snowflake_handson/
 │   ├── 03_model_training.ipynb           # モデル学習 + CV + SHAP
 │   ├── 04_experiment_tracking.ipynb      # 実験管理（複数モデル比較）
 │   ├── 05_model_registry.ipynb           # モデル登録・本番デプロイ
-│   ├── 06_experiment_viewer_app.ipynb    # Streamlit実験ビューア（説明用）
+│   ├── 06_experiment_viewer_app.ipynb    # Streamlit実験ビューア作成
 │   └── environment.yml                   # パッケージ依存関係
 ├── streamlit/
 │   └── experiment_viewer.py              # Streamlitアプリ本体

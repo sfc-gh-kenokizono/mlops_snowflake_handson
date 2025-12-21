@@ -259,16 +259,15 @@ Feature Storeと同様に、モデルもバージョン管理できます。
 ## Step 6: Experiment Viewer（10分）
 
 ### 実行
-1. Snowsightで新しいワークシートを作成
-2. `setup/setup_after_04.sql` をコピー＆ペースト
-3. 「Run All」で実行
-4. **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
+1. 06_EXPERIMENT_VIEWER_APP Notebookを開く
+2. SQLセル（Cell 2）を実行
+3. **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
 
 ### 📢 説明ポイント
 
 #### 6.1 SQLで自動作成
 ```
-「setup_after_04.sqlを実行するだけで、
+「このSQLセルを実行するだけで、
 Streamlitアプリが自動作成されます。
 
 Git統合を使っているので:

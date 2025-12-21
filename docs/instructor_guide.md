@@ -533,16 +533,21 @@
 
 **所要時間**: 約10分
 
-## Cell 0-5（すべてマークダウン）
-📝 このNotebookは説明用。実際のStreamlitアプリは`setup_after_04.sql`で作成。
+## Cell 0（マークダウン）: タイトル・目標
+📝 セクション概要。Streamlitで実験結果を可視化するのがゴール。
 
-📢 「Section 6では、Streamlitアプリで実験結果を可視化します。まず、setup/setup_after_04.sqlを実行してアプリを作成しましょう。」
+## Cell 1（マークダウン）: 6.1 アプリ作成の説明
+📝 Git統合でコード管理している旨を説明。
 
-### 実行手順
-1. Snowsightで新しいワークシートを作成
-2. `setup/setup_after_04.sql` をコピー＆ペースト
-3. 「Run All」で実行
-4. **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
+## Cell 2（SQL）: Streamlitアプリ作成
+📢 「このSQLセルを実行するだけで、Streamlitアプリが自動作成されます。」
+📝 Git FETCH → CREATE STREAMLIT → GRANT USAGEの流れ。
+
+## Cell 3-6（マークダウン）: 使い方・まとめ
+📝 アプリの開き方、機能説明、ハンズオン完了メッセージ。
+
+### 実行後の確認
+- **Projects → Streamlit → EXPERIMENT_VIEWER** を開く
 
 ### 📊 UI確認ポイント
 - 比較ビュー: 全Runのメトリクス一覧
@@ -596,7 +601,7 @@ A: Model Registryに登録済みなので、SQLから直接呼び出せます。
 - Snowsightでコンピュートプールの状態を確認
 
 ### Streamlitアプリが表示されない
-- setup_after_04.sqlが実行されていない可能性
+- 06 NotebookのSQLセル（Cell 2）が実行されていない可能性
 - 実行して「🎉 Experiment Viewer 作成完了！」を確認
 
 ---

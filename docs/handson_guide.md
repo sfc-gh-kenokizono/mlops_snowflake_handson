@@ -380,12 +380,12 @@ model_ref_v2 = registry.log_model(
 - 複数Runの比較を容易にする
 - 過学習検出（Train vs Test F1）を視覚的に確認する
 
-### 実行方法（SQLで自動作成）
+### 実行方法
+
+06_EXPERIMENT_VIEWER_APP Notebookを開き、SQLセル（Cell 2）を実行するだけです。
 
 ```sql
--- Snowsightで setup/setup_after_04.sql を実行
--- または以下を直接実行：
-
+-- Notebook内のSQLセルで実行：
 USE ROLE ACCOUNTADMIN;
 ALTER GIT REPOSITORY MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE FETCH;
 
