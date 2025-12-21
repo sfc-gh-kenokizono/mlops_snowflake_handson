@@ -58,7 +58,7 @@ with tab1:
     
     comparison_df = df[columns_to_show].copy()
     comparison_df.columns = column_names
-    st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+    st.dataframe(comparison_df, use_container_width=True)
     
     if "TRAIN_F1_SCORE" in df.columns:
         st.caption("💡 Gap = Train F1 - Test F1（大きいほど過学習の可能性）")
