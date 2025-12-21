@@ -29,12 +29,12 @@ DROP NOTEBOOK IF EXISTS MLOPS_HOL_DB.NOTEBOOKS."06_EXPERIMENT_VIEWER_APP";
 DROP STREAMLIT IF EXISTS MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_VIEWER;
 
 -- ============================================
--- 4. Git Repositoryの削除（_KE: チーム共有アカウント用サフィックス）
+-- 4. Git Repositoryの削除
 -- ============================================
 DROP GIT REPOSITORY IF EXISTS MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE;
 
 -- ============================================
--- 5. API Integrationの削除（_KE: チーム共有アカウント用サフィックス）
+-- 5. API Integrationの削除
 -- ============================================
 DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION_KE;
 

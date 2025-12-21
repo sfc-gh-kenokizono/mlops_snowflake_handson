@@ -26,7 +26,7 @@ Snowflake MLOps ハンズオン - 環境セットアップ（オールインワ�
 -- ============================================
 USE ROLE ACCOUNTADMIN;
 
--- Git API統合の作成（_KE: チーム共有アカウント用サフィックス）
+-- Git API統合の作成
 CREATE OR REPLACE API INTEGRATION GIT_API_INTEGRATION_KE
   API_PROVIDER = git_https_api
   API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-kenokizono/')
@@ -36,7 +36,7 @@ CREATE OR REPLACE API INTEGRATION GIT_API_INTEGRATION_KE
 CREATE DATABASE IF NOT EXISTS MLOPS_HOL_DB
     COMMENT = 'Snowflake MLOps Hands-on Lab Database';
 
--- Gitリポジトリの登録（_KE: チーム共有アカウント用サフィックス）
+-- Gitリポジトリの登録
 CREATE OR REPLACE GIT REPOSITORY MLOPS_HOL_DB.PUBLIC.MLOPS_HOL_REPO_KE
   API_INTEGRATION = GIT_API_INTEGRATION_KE
   ORIGIN = 'https://github.com/sfc-gh-kenokizono/mlops_snowflake_handson.git';
