@@ -68,9 +68,10 @@ mlops_snowflake_handson/
 ├── data/
 │   ├── customers.csv                     # 顧客マスタ
 │   └── orders.csv                        # 注文履歴
-└── docs/
-    ├── handson_guide.md                  # 詳細ガイド
-    └── instructor_guide.md               # 講師用ガイド（セル説明＋UI操作）
+├── docs/
+│   └── handson_guide.md                  # 詳細ガイド
+└── _internal/
+    └── instructor_guide.md               # 講師用ガイド
 ```
 
 ## 🔄 MLOpsワークフロー
