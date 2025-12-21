@@ -29,7 +29,7 @@ st.caption("MLOps Hands-on Lab - 実験結果ビューア")
 
 # データ取得
 try:
-    df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
+    df = session.table("MLOPS_HOL_DB.EXPERIMENTS.EXPERIMENT_RESULTS").to_pandas()
 except Exception as e:
     st.error(f"❌ EXPERIMENT_RESULTSテーブルが見つかりません。先にSection 4 (04_EXPERIMENT_TRACKING) を実行してください。")
     st.stop()

@@ -304,8 +304,8 @@ Git統合を使っているので:
 |----------|----------|------|
 | CHURN_LABELS | PREP_DATA | チャーンラベル |
 | TRAINING_DATASET_V1 | FEATURE_STORE | 学習データ |
-| MODEL_PREDICTIONS_V1 | FEATURE_STORE | 予測結果 |
-| EXPERIMENT_RESULTS | FEATURE_STORE | 実験結果 |
+| MODEL_PREDICTIONS_V1 | ANALYTICS | 予測結果 |
+| EXPERIMENT_RESULTS | EXPERIMENTS | 実験結果 |
 | CHURN_RISK_CUSTOMERS | ANALYTICS | 施策対象リスト |
 
 ### 📢 まとめ

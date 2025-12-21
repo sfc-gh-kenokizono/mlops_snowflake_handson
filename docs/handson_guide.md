@@ -405,7 +405,7 @@ import altair as alt
 session = get_active_session()
 
 # 実験結果の取得
-df = session.table("MLOPS_HOL_DB.FEATURE_STORE.EXPERIMENT_RESULTS").to_pandas()
+df = session.table("MLOPS_HOL_DB.EXPERIMENTS.EXPERIMENT_RESULTS").to_pandas()
 
 # 比較テーブルの表示
 st.dataframe(df[["RUN_NAME", "F1_SCORE", "TRAIN_F1_SCORE", "OVERFIT_GAP_F1"]])
